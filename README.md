@@ -43,6 +43,6 @@ class Changelog
 ```
 
 Then you can create a list configuration for this entity `bin/console make:sulu:list App\\Entity\\Changelog`. This will ask for every property if it should be visible and if it is should be searchable. Looking like this:
-!(Maker Bundle)[img/maker_bundle.png]
+![Image](img/maker_bundle.png)
 
 Most of the values have defaults so just hitting enter on most of them works.
