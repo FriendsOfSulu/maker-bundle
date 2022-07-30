@@ -1,12 +1,12 @@
 <?php
 
-namespace Mamazu\SuluMaker\Generators;
+namespace Mamazu\SuluMaker\ListConfiguration;
 
 use Mamazu\SuluMaker\Objects\ListConfiguration;
 
-class XmlListGenerator
+class XmlGenerator
 {
-    public function generateProperty(string $entityClass, ListConfiguration $listConfiguration): string
+    public function generateProperty(string $entityClass, ConfigurationPDO $listConfiguration): string
     {
         $name = $listConfiguration->name;
         $visibility = $listConfiguration->visibility;

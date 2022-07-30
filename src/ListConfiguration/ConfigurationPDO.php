@@ -1,8 +1,8 @@
 <?php
 
-namespace Mamazu\SuluMaker\Objects;
+namespace Mamazu\SuluMaker\ListConfiguration;
 
-class ListConfiguration
+class ConfigurationPDO
 {
     public function __construct(
         public string $name,

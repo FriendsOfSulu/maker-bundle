@@ -1,6 +1,6 @@
 <?php
 
-namespace Mamazu\SuluMaker\Maker;
+namespace Mamazu\SuluMaker\ListConfiguration;
 
 use ReflectionClass;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
@@ -14,17 +14,15 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
-use Mamazu\SuluMaker\Objects\ListConfiguration;
-use Mamazu\SuluMaker\Generators\XmlListGenerator;
 
-class MakeListConfiguration extends AbstractMaker
+class MakeListConfigurationCommand extends AbstractMaker
 {
     const ARG_RESOURCE_CLASS = 'resourceClass';
     const OPT_FORCE = 'force';
 
     public function __construct(
         private string $projectDirectory,
-        private XmlListGenerator $xmlListGenerator
+        private XmlGenerator $xmlListGenerator
     ) {}
 
     public static function getCommandName(): string
@@ -42,8 +40,6 @@ class MakeListConfiguration extends AbstractMaker
         $command
             ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
             ->addOption(self::OPT_FORCE, '-f', InputOption::VALUE_NONE, 'Force the creation of a new file even if the old one is already there');
-
-        //$inputConfig->setArgumentAsNonInteractive(self::ARG_RESOURCE_CLASS);
     }
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
@@ -78,12 +74,21 @@ class MakeListConfiguration extends AbstractMaker
                 continue;
             }
 
-            $properties[$name] = new ListConfiguration(
-                $name,
-                $io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'yes'),
-                $io->choice('Searchable', ['yes', 'no'], 'yes'),
-                $io->ask('Translation', 'sulu_admin.'.$name),
-            );
+            if ($name === 'id') {
+                $properties[$name] = new ConfigurationPDO(
+                    $name,
+                    $io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'no'),
+                    $io->choice('Searchable', ['yes', 'no'], 'yes'),
+                    'sulu_admin.'.$name,
+                );
+            } else {
+                $properties[$name] = new ConfigurationPDO(
+                    $name,
+                    $io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'yes'),
+                    $io->choice('Searchable', ['yes', 'no'], 'yes'),
+                    $io->ask('Translation', 'sulu_admin.'.$name),
+                );
+            }
 
             $io->note(sprintf('Property "%s" added', $name));
         }
@@ -91,10 +96,9 @@ class MakeListConfiguration extends AbstractMaker
         $xml = $this->xmlListGenerator->generate($resourceKey, $className, $properties);
         file_put_contents($filePath, $xml);
 
-        $this->writeSuccessMessage($io);
-        $io->text([
-            'Generated file can be found under: '. $filePath
-        ]);
+        $io->success('Success');
+        $io->success('');
+        $io->success('Generated file can be found under: '. $filePath);
     }
 
     public function configureDependencies(DependencyBuilder $dependencies): void

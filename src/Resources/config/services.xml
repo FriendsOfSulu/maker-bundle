@@ -4,13 +4,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 <services>
-    <defaults public="false" />
+    <defaults autowire="true" autoconfigure="true" />
 
-    <service id="Mamazu\SuluMaker\Generators\XmlListGenerator" />
+    <service id="Mamazu\SuluMaker\ListConfiguration\XmlGenerator" />
 
-    <service id="Mamazu\SuluMaker\Maker\MakeListConfiguration">
+    <service id="Mamazu\SuluMaker\ListConfiguration\MakeListConfigurationCommand">
         <argument>%kernel.project_dir%</argument>
-        <argument type="service" id="Mamazu\SuluMaker\Generators\XmlListGenerator" />
+        <argument type="service" id="Mamazu\SuluMaker\ListConfiguration\XmlGenerator" />
         <tag name="maker.command" />
     </service>
 </services>
