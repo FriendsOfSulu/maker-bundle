@@ -75,17 +75,21 @@ class MakeListConfigurationCommand extends AbstractMaker
             }
 
             if ($name === 'id') {
+                $visible = $io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'no');
+
                 $properties[$name] = new ConfigurationPDO(
                     $name,
-                    $io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'no'),
-                    $io->choice('Searchable', ['yes', 'no'], 'yes'),
+                    $visible,
+                    $visible ? $io->choice('Searchable', ['yes', 'no'], 'yes') : 'no',
                     'sulu_admin.'.$name,
                 );
             } else {
+                $visible = $io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'yes');
+
                 $properties[$name] = new ConfigurationPDO(
                     $name,
-                    $io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'yes'),
-                    $io->choice('Searchable', ['yes', 'no'], 'yes'),
+                    $visible,
+                    $visible ? $io->choice('Searchable', ['yes', 'no'], 'yes') : 'no',
                     $io->ask('Translation', 'sulu_admin.'.$name),
                 );
             }
