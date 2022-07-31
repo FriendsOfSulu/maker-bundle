@@ -22,7 +22,8 @@ class MakeListConfigurationCommand extends AbstractMaker
 
     public function __construct(
         private string $projectDirectory,
-        private XmlGenerator $xmlListGenerator
+        private XmlGenerator $xmlListGenerator,
+        private PropertyInfoProvider $propertyInfoProvider
     ) {}
 
     public static function getCommandName(): string
@@ -65,37 +66,9 @@ class MakeListConfigurationCommand extends AbstractMaker
         }
 
         $io->writeln('Generating stuff for '. $className);
-        $properties = [];
-        foreach($reflection->getProperties() as $property) {
-            if ($property->isStatic()) { continue; }
-            $name = $property->getName();
 
-            if (!$io->confirm(sprintf('Should this property "%s" be configured', $name))) {
-                continue;
-            }
-
-            if ($name === 'id') {
-                $visible = $io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'no');
-
-                $properties[$name] = new ConfigurationPDO(
-                    $name,
-                    $visible,
-                    $visible ? $io->choice('Searchable', ['yes', 'no'], 'yes') : 'no',
-                    'sulu_admin.'.$name,
-                );
-            } else {
-                $visible = $io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'yes');
-
-                $properties[$name] = new ConfigurationPDO(
-                    $name,
-                    $visible,
-                    $visible ? $io->choice('Searchable', ['yes', 'no'], 'yes') : 'no',
-                    $io->ask('Translation', 'sulu_admin.'.$name),
-                );
-            }
-
-            $io->note(sprintf('Property "%s" added', $name));
-        }
+        $this->propertyInfoProvider->setIo($io);
+        $properties = $this->propertyInfoProvider->provide($reflection->getProperties());
 
         $xml = $this->xmlListGenerator->generate($resourceKey, $className, $properties);
         file_put_contents($filePath, $xml);
