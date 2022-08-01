@@ -9,9 +9,13 @@ class XmlGenerator
         $name = $listConfiguration->name;
         $visibility = $listConfiguration->visibility;
         $translation = $listConfiguration->translations;
+        $additionlAttributes = '';
+        if ($listConfiguration->type !== null) {
+            $additionlAttributes .= 'type="' . $listConfiguration->type . '" ';
+        }
 
         return <<<XML
-    <property name="$name" visibility="$visibility" translation="$translation">
+    <property name="$name" visibility="$visibility" translation="$translation" $additionlAttributes>
         <field-name>$name</field-name>
         <entity-name>$entityClass</entity-name>
     </property>

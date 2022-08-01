@@ -6,9 +6,10 @@ class ListPropertyInfo
 {
     public function __construct(
         public string $name,
-        public string $visibility,
-        public string $searchability,
-        public string $translations
+        public bool $visibility,
+        public bool $searchability,
+        public string $translations,
+        public ?string $type = null
     ) {
 
     }

@@ -22,34 +22,36 @@ class ListPropertyInfoProvider
     public function provide(array $properties): array {
         Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
         $returnValue = [];
+
+        $returnValue[] = new ListPropertyInfo('id', false, false, 'sulu_admin.id');
+
         foreach($properties as $property) {
-            if ($property->isStatic()) { continue; }
             $name = $property->getName();
+            if ($property->isStatic() || $name === 'id') { continue; }
 
             if (!$this->io->confirm(sprintf('Should this property "%s" be configured', $name))) {
                 $this->io->note(sprintf('Property "%s" skipped', $name));
                 continue;
             }
 
-            if ($name === 'id') {
-                /** @var string $visible */
-                $visible = $this->io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'no');
+            /** @var string $visible */
+            $visible = $this->io->choice('Visible?', ['yes', 'no']);
 
-                /** @var string $searchable */
-                $searchable = $visible === 'yes' ? $this->io->choice('Searchable', ['yes', 'no'], 'yes') : 'no';
+            /** @var string $searchable */
+            $searchable = $visible === 'yes' ? $this->io->choice('Searchable?', ['yes', 'no', 'hidden'], 'yes') : 'no';
 
-                $returnValue[$name] = new ListPropertyInfo($name, $visible, $searchable, 'sulu_admin.'.$name);
-            } else {
-                /** @var string $visible */
-                $visible = $this->io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'yes');
+            /** @var string|null $type */
+            $type = $this->io->ask('Type (leave empty if it is a primitive type)', null);
 
-                /** @var string $searchable */
-                $searchable = $visible === 'yes' ? $this->io->choice('Searchable', ['yes', 'no'], 'yes') : 'no';
-
-                /** @var string $translation */
-                $translation = $this->io->ask('Translation', 'sulu_admin.'.$name);
-                $returnValue[$name] = new ListPropertyInfo($name, $visible, $searchable, $translation);
-            }
+            /** @var string $translation */
+            $translation = $this->io->ask('Translation', 'sulu_admin.'.$name);
+            $returnValue[$name] = new ListPropertyInfo(
+                $name,
+                $searchable !== 'hidden',
+                $searchable === 'yes',
+                $translation,
+                $type
+            );
 
             $this->io->note(sprintf('Property "%s" added', $name));
         }
