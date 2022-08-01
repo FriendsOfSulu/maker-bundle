@@ -3,11 +3,13 @@
     "description": "Package to generate configuration in Sulu",
     "type": "library",
     "require": {
-        "symfony/maker-bundle": "^1.45"
+        "symfony/maker-bundle": "^1.45",
+        "webmozart/assert": "^1.11"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
-        "phpstan/phpstan": "^1.8"
+        "phpstan/phpstan": "^1.8",
+        "phpstan/phpstan-webmozart-assert": "^1.2"
     },
     "license": "MIT",
     "autoload": {

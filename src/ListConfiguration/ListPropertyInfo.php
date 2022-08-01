@@ -2,7 +2,7 @@
 
 namespace Mamazu\SuluMaker\ListConfiguration;
 
-class ConfigurationPDO
+class ListPropertyInfo
 {
     public function __construct(
         public string $name,

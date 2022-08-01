@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Webmozart\Assert\Assert;
 
 class MakeListConfigurationCommand extends AbstractMaker
 {
@@ -23,7 +24,7 @@ class MakeListConfigurationCommand extends AbstractMaker
     public function __construct(
         private string $projectDirectory,
         private XmlGenerator $xmlListGenerator,
-        private PropertyInfoProvider $propertyInfoProvider
+        private ListPropertyInfoProvider $propertyInfoProvider
     ) {}
 
     public static function getCommandName(): string
@@ -51,9 +52,13 @@ class MakeListConfigurationCommand extends AbstractMaker
             throw new FileNotFoundException('Could not find config directory: ' . $configDirectory);
         }
 
+        /** @var string $className */
         $className = $input->getArgument(self::ARG_RESOURCE_CLASS);
+        Assert::classExists($className, 'Class does not exist. Please provide an existing entity');
         $reflection = new ReflectionClass($className);
+
         $resourceKey = $reflection->getProperty('RESOURCE_KEY')->getValue();
+        Assert::string($resourceKey, 'Resource key must be a "string" but got "'. get_debug_type($resourceKey). '" given');
 
         $filePath = $configDirectory.'/'.$resourceKey.'.xml';
         if (file_exists($filePath) && !$input->getOption('force')) {

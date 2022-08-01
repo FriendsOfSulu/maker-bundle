@@ -2,11 +2,9 @@
 
 namespace Mamazu\SuluMaker\ListConfiguration;
 
-use Mamazu\SuluMaker\Objects\ListConfiguration;
-
 class XmlGenerator
 {
-    public function generateProperty(string $entityClass, ConfigurationPDO $listConfiguration): string
+    public function generateProperty(string $entityClass, ListPropertyInfo $listConfiguration): string
     {
         $name = $listConfiguration->name;
         $visibility = $listConfiguration->visibility;
@@ -21,7 +19,7 @@ XML;
     }
 
     /**
-     * @param array<ListConfiguration> $properties
+     * @param array<ListPropertyInfo> $properties
      */
     public function generate(string $listKey, string $entityClass, array $properties): string {
         $properties = implode(

@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
 class SuluMakerExtension extends Extension
 {
+    /** @param array<mixed> $configs */
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));

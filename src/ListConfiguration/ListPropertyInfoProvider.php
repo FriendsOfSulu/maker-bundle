@@ -4,8 +4,9 @@ namespace Mamazu\SuluMaker\ListConfiguration;
 
 use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
+use Webmozart\Assert\Assert;
 
-class PropertyInfoProvider
+class ListPropertyInfoProvider
 {
     private ?ConsoleStyle $io = null;
 
@@ -16,9 +17,10 @@ class PropertyInfoProvider
     /**
      * @param array<ReflectionProperty> $properties
      *
-     * @return array<ConfigurationPDO>
+     * @return array<ListPropertyInfo>
      */
     public function provide(array $properties): array {
+        Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
         $returnValue = [];
         foreach($properties as $property) {
             if ($property->isStatic()) { continue; }
@@ -30,23 +32,23 @@ class PropertyInfoProvider
             }
 
             if ($name === 'id') {
+                /** @var string $visible */
                 $visible = $this->io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'no');
 
-                $returnValue[$name] = new ConfigurationPDO(
-                    $name,
-                    $visible,
-                    $visible === 'yes' ? $this->io->choice('Searchable', ['yes', 'no'], 'yes') : 'no',
-                    'sulu_admin.'.$name,
-                );
+                /** @var string $searchable */
+                $searchable = $visible === 'yes' ? $this->io->choice('Searchable', ['yes', 'no'], 'yes') : 'no';
+
+                $returnValue[$name] = new ListPropertyInfo($name, $visible, $searchable, 'sulu_admin.'.$name);
             } else {
+                /** @var string $visible */
                 $visible = $this->io->choice('When should this property be visible.', ['never', 'yes', 'no'], 'yes');
 
-                $returnValue[$name] = new ConfigurationPDO(
-                    $name,
-                    $visible,
-                    $visible === 'yes' ? $this->io->choice('Searchable', ['yes', 'no'], 'yes') : 'no',
-                    $this->io->ask('Translation', 'sulu_admin.'.$name),
-                );
+                /** @var string $searchable */
+                $searchable = $visible === 'yes' ? $this->io->choice('Searchable', ['yes', 'no'], 'yes') : 'no';
+
+                /** @var string $translation */
+                $translation = $this->io->ask('Translation', 'sulu_admin.'.$name);
+                $returnValue[$name] = new ListPropertyInfo($name, $visible, $searchable, $translation);
             }
 
             $this->io->note(sprintf('Property "%s" added', $name));
