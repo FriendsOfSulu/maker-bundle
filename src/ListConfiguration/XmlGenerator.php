@@ -7,7 +7,7 @@ class XmlGenerator
     public function generateProperty(string $entityClass, ListPropertyInfo $listConfiguration): string
     {
         $name = $listConfiguration->name;
-        $visibility = $listConfiguration->visibility;
+        $visibility = $listConfiguration->visibility ? "yes" : "no";
         $translation = $listConfiguration->translations;
         $additionlAttributes = '';
         if ($listConfiguration->type !== null) {

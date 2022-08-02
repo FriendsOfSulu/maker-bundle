@@ -2,6 +2,7 @@
 
 namespace Mamazu\SuluMaker\ListConfiguration;
 
+use Mamazu\SuluMaker\Utils\UniqueNameGenerator;
 use ReflectionClass;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
@@ -24,7 +25,8 @@ class MakeListConfigurationCommand extends AbstractMaker
     public function __construct(
         private string $projectDirectory,
         private XmlGenerator $xmlListGenerator,
-        private ListPropertyInfoProvider $propertyInfoProvider
+        private ListPropertyInfoProvider $propertyInfoProvider,
+        private UniqueNameGenerator $nameGenerator
     ) {}
 
     public static function getCommandName(): string
@@ -55,10 +57,8 @@ class MakeListConfigurationCommand extends AbstractMaker
         /** @var string $className */
         $className = $input->getArgument(self::ARG_RESOURCE_CLASS);
         Assert::classExists($className, 'Class does not exist. Please provide an existing entity');
-        $reflection = new ReflectionClass($className);
 
-        $resourceKey = $reflection->getProperty('RESOURCE_KEY')->getValue();
-        Assert::string($resourceKey, 'Resource key must be a "string" but got "'. get_debug_type($resourceKey). '" given');
+        $resourceKey = $this->nameGenerator->getUniqueName($className);
 
         $filePath = $configDirectory.'/'.$resourceKey.'.xml';
         if (file_exists($filePath) && !$input->getOption('force')) {
@@ -73,7 +73,7 @@ class MakeListConfigurationCommand extends AbstractMaker
         $io->writeln('Generating stuff for '. $className);
 
         $this->propertyInfoProvider->setIo($io);
-        $properties = $this->propertyInfoProvider->provide($reflection->getProperties());
+        $properties = $this->propertyInfoProvider->provide((new ReflectionClass($className))->getProperties());
 
         $xml = $this->xmlListGenerator->generate($resourceKey, $className, $properties);
         file_put_contents($filePath, $xml);

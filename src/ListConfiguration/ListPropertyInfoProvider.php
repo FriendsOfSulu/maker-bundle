@@ -2,6 +2,7 @@
 
 namespace Mamazu\SuluMaker\ListConfiguration;
 
+use Mamazu\SuluMaker\Enums\Visibility;
 use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Webmozart\Assert\Assert;
@@ -35,7 +36,7 @@ class ListPropertyInfoProvider
             }
 
             /** @var string $visible */
-            $visible = $this->io->choice('Visible?', ['yes', 'no']);
+            $visible = $this->io->choice('Visible?', Visibility::values(), 'yes');
 
             /** @var string $searchable */
             $searchable = $visible === 'yes' ? $this->io->choice('Searchable?', ['yes', 'no', 'hidden'], 'yes') : 'no';
