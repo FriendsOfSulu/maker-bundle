@@ -45,23 +45,16 @@ class ListPropertyInfoProvider
 
             $visibility = Visibility::from($this->io->choice('Visible?', Visibility::descriptions(), 'yes'));
 
-            /** @var string $searchable */
-            $searchable = 'no';
+            $searchable = false;
             if ($visibility->isVisible()) {
-                $searchable = $this->io->choice('Searchable?', ['yes', 'no', 'hidden'], 'yes');
+                $searchable = $this->io->confirm('Searchable?');
             }
 
             $type = $this->getType($property);
 
             /** @var string $translation */
             $translation = $this->io->ask('Translation', 'sulu_admin.'.$name);
-            $returnValue[$name] = new ListPropertyInfo(
-                $name,
-                $visibility,
-                $searchable === 'yes',
-                $translation,
-                $type
-            );
+            $returnValue[$name] = new ListPropertyInfo( $name, $visibility, $searchable, $translation, $type);
         }
 
         return $returnValue;
