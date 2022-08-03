@@ -29,8 +29,4 @@ class Visibility extends Enum
             self::NEVER_ => "Same as no but the user can't choose to show the property",
         ];
     }
-
-    public static function NO()
-    {
-    }
 }

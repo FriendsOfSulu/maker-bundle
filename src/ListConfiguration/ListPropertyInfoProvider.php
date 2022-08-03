@@ -37,8 +37,9 @@ class ListPropertyInfoProvider
             $name = $property->getName();
             if ($property->isStatic() || $name === 'id') { continue; }
 
+            $this->io->info(sprintf('Configuring property: "%s"', $name));
             if (!$this->io->confirm(sprintf('Should this property "%s" be configured', $name))) {
-                $this->io->note(sprintf('Property "%s" skipped', $name));
+                $this->io->info(sprintf('Property "%s" skipped', $name));
                 continue;
             }
 
@@ -61,17 +62,22 @@ class ListPropertyInfoProvider
                 $translation,
                 $type
             );
-
-            $this->io->note(sprintf('Property "%s" added', $name));
         }
 
         return $returnValue;
     }
 
     private function getType(ReflectionProperty $property): ?string {
+        Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
+
+        if ($property->getType() === null) {
+            $this->io->note('There is no PHP type configured for this property. Assuming it is a string.');
+            return null;
+        }
+
         $possibleTypes = $this->typeGuesser->getPossibleTypes($property);
         if ($possibleTypes === []) {
-            $this->io->info('Could not find any suggestions for the PHP Type of the property. You can extend the class '. PropertyToSuluTypeGuesser::class. ' for smarter type guessing.');
+            $this->io->note('Could not find any suggestions for the PHP Type of the property. You can extend the class '. PropertyToSuluTypeGuesser::class. ' for smarter type guessing.');
             return null;
         }
 
@@ -79,7 +85,7 @@ class ListPropertyInfoProvider
             $keys = array_keys($possibleTypes);
             $type = reset($keys);
             $description = reset($possibleTypes);
-            $this->io->note(sprintf('Choosing the only possible type: %s (%s)', $type, $description));
+            $this->io->info(sprintf('Choosing the only possible type: %s (%s)', $type, $description));
 
             return $type;
         }
@@ -91,7 +97,7 @@ class ListPropertyInfoProvider
             $keys = array_keys($possibleTypes);
             $type = reset($keys);
             $description = reset($possibleTypes);
-            $this->io->note(sprintf('Choosing the best guess: %s (%s)', $type, $description));
+            $this->io->info(sprintf('Choosing the best guess: %s (%s)', $type, $description));
         }
 
         return $type;

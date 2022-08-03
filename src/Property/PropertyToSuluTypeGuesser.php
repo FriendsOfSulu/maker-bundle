@@ -4,26 +4,29 @@ namespace Mamazu\SuluMaker\Property;
 
 use DateTimeInterface;
 use ReflectionProperty;
+use ReflectionNamedType;
 
 class PropertyToSuluTypeGuesser
 {
     /** @return array<string, string> */
     public function getPossibleTypes(ReflectionProperty $property): array
     {
-        $propertyType =$property->getType()->getName();
-        if ($propertyType === 'bool') {
+        /** @var ReflectionNamedType|null $propertyType */
+        $propertyType =$property->getType();
+        $typeName = $propertyType?->getName();
+        if ($typeName === 'bool') {
             return ['checkbox' => 'Renders a checkbox'];
         }
 
-        if ($propertyType === 'string') {
+        if ($typeName === 'string') {
             return [null => 'Renders a text field'];
         }
 
-        if (in_array($propertyType, ['float', 'int'])) {
+        if (in_array($typeName, ['float', 'int'])) {
             return ['number' => 'Renders a number'];
         }
 
-        if (is_a($propertyType, DateTimeInterface::class, true)) {
+        if (is_a($typeName, DateTimeInterface::class, true)) {
             return [
                 'datetime' => "Renders a datetime selector",
                 'date' => "Renders a date selector",
