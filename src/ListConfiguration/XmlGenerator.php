@@ -7,10 +7,14 @@ class XmlGenerator
     public function generateProperty(string $entityClass, ListPropertyInfo $listConfiguration): string
     {
         $name = $listConfiguration->name;
-        $visibility = $listConfiguration->visibility ? "yes" : "no";
+        $visibility = (string)$listConfiguration->visibility;
         $translation = $listConfiguration->translations;
         $additionlAttributes = '';
-        if ($listConfiguration->type !== null) {
+        if ($listConfiguration->visibility->isVisible()) {
+            $searchability = $listConfiguration->searchability ? 'yes': 'no';
+            $additionlAttributes .= sprintf('searchability="%s" ', $searchability);
+        }
+        if ($listConfiguration->type) {
             $additionlAttributes .= 'type="' . $listConfiguration->type . '" ';
         }
 
@@ -37,7 +41,7 @@ XML;
 <list xmlns="http://schemas.sulu.io/list-builder/list">
     <key>$listKey</key>
     <properties>
-    $properties
+$properties
     </properties>
 </list>
 XML;

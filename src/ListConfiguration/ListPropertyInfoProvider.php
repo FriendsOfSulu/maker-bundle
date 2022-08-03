@@ -3,12 +3,19 @@
 namespace Mamazu\SuluMaker\ListConfiguration;
 
 use Mamazu\SuluMaker\Enums\Visibility;
+use Mamazu\SuluMaker\Property\PropertyToSuluTypeGuesser;
 use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Webmozart\Assert\Assert;
 
 class ListPropertyInfoProvider
 {
+    public function __construct(
+        private /* readonly */ PropertyToSuluTypeGuesser $typeGuesser
+    ) {
+
+    }
+
     private ?ConsoleStyle $io = null;
 
     public function setIo(ConsoleStyle $io): void {
@@ -24,7 +31,7 @@ class ListPropertyInfoProvider
         Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
         $returnValue = [];
 
-        $returnValue[] = new ListPropertyInfo('id', false, false, 'sulu_admin.id');
+        $returnValue[] = new ListPropertyInfo('id', Visibility::from(Visibility::NO), false, 'sulu_admin.id');
 
         foreach($properties as $property) {
             $name = $property->getName();
@@ -35,20 +42,21 @@ class ListPropertyInfoProvider
                 continue;
             }
 
-            /** @var string $visible */
-            $visible = $this->io->choice('Visible?', Visibility::values(), 'yes');
+            $visibility = Visibility::from($this->io->choice('Visible?', Visibility::descriptions(), 'yes'));
 
             /** @var string $searchable */
-            $searchable = $visible === 'yes' ? $this->io->choice('Searchable?', ['yes', 'no', 'hidden'], 'yes') : 'no';
+            $searchable = 'no';
+            if ($visibility->isVisible()) {
+                $searchable = $this->io->choice('Searchable?', ['yes', 'no', 'hidden'], 'yes');
+            }
 
-            /** @var string|null $type */
-            $type = $this->io->ask('Type (leave empty if it is a primitive type)', null);
+            $type = $this->getType($property);
 
             /** @var string $translation */
             $translation = $this->io->ask('Translation', 'sulu_admin.'.$name);
             $returnValue[$name] = new ListPropertyInfo(
                 $name,
-                $searchable !== 'hidden',
+                $visibility,
                 $searchable === 'yes',
                 $translation,
                 $type
@@ -59,4 +67,34 @@ class ListPropertyInfoProvider
 
         return $returnValue;
     }
+
+    private function getType(ReflectionProperty $property): ?string {
+        $possibleTypes = $this->typeGuesser->getPossibleTypes($property);
+        if ($possibleTypes === []) {
+            $this->io->info('Could not find any suggestions for the PHP Type of the property. You can extend the class '. PropertyToSuluTypeGuesser::class. ' for smarter type guessing.');
+            return null;
+        }
+
+        if (count($possibleTypes) === 1) {
+            $keys = array_keys($possibleTypes);
+            $type = reset($keys);
+            $description = reset($possibleTypes);
+            $this->io->note(sprintf('Choosing the only possible type: %s (%s)', $type, $description));
+
+            return $type;
+        }
+
+        /** @var string|null $type */
+        $type = $this->io->choice('Sulu display type', $possibleTypes);
+
+        if ($type === null) {
+            $keys = array_keys($possibleTypes);
+            $type = reset($keys);
+            $description = reset($possibleTypes);
+            $this->io->note(sprintf('Choosing the best guess: %s (%s)', $type, $description));
+        }
+
+        return $type;
+    }
+
 }
