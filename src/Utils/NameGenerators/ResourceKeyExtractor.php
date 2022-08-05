@@ -1,11 +1,11 @@
 <?php
 
-namespace Mamazu\SuluMaker\Utils;
+namespace Mamazu\SuluMaker\Utils\NameGenerators;
 
 use ReflectionClass;
 use Webmozart\Assert\Assert;
 
-class ResouceKeyExtractor implements UniqueNameGenerator
+class ResourceKeyExtractor implements UniqueNameGenerator
 {
     /** @param class-string $className */
     public function getUniqueName(string $className): string

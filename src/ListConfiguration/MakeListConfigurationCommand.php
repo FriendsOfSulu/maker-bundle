@@ -2,7 +2,7 @@
 
 namespace Mamazu\SuluMaker\ListConfiguration;
 
-use Mamazu\SuluMaker\Utils\UniqueNameGenerator;
+use Mamazu\SuluMaker\Utils\NameGenerators\UniqueNameGenerator;
 use ReflectionClass;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;

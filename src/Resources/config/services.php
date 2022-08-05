@@ -1,7 +1,11 @@
 <?php
 
+use Mamazu\SuluMaker\AdminConfiguration\MakeAdminConfigurationCommand;
 use Mamazu\SuluMaker\ListConfiguration\MakeListConfigurationCommand;
+use Mamazu\SuluMaker\Utils\NameGenerators\AdminClassNameGenerator;
+use Mamazu\SuluMaker\Utils\NameGenerators\ResourceKeyExtractor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return function(ContainerConfigurator $configurator) {
     // default configuration for services in *this* file
@@ -17,6 +21,16 @@ return function(ContainerConfigurator $configurator) {
              ->exclude('../../src/{DependencyInjection,Entity,Tests,Kernel.php}');
 
     $services->set(MakeListConfigurationCommand::class)
-            ->arg('$projectDirectory', '%kernel.project_dir%')
+             ->arg('$projectDirectory', '%kernel.project_dir%')
+             ->arg('$nameGenerator', service(ResourceKeyExtractor::class))
         ;
+
+    $services->set(MakeAdminConfigurationCommand::class)
+             ->arg('$nameGenerator', service(AdminClassNameGenerator::class))
+         ;
+
+    $services->set(AdminClassNameGenerator::class)
+             ->args([
+                 service(ResourceKeyExtractor::class)
+             ]);
 };

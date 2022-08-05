@@ -1,6 +1,6 @@
 <?php
 
-namespace Mamazu\SuluMaker\Utils;
+namespace Mamazu\SuluMaker\Utils\NameGenerators;
 
 interface UniqueNameGenerator
 {
