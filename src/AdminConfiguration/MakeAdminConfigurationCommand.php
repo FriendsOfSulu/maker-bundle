@@ -2,6 +2,7 @@
 
 namespace Mamazu\SuluMaker\AdminConfiguration;
 
+use Mamazu\SuluMaker\Utils\ConsoleHelperTrait;
 use Mamazu\SuluMaker\Utils\NameGenerators\ResourceKeyExtractor;
 use Mamazu\SuluMaker\Utils\NameGenerators\UniqueNameGenerator;
 use ReflectionClass;
@@ -21,6 +22,8 @@ use Webmozart\Assert\Assert;
 
 class MakeAdminConfigurationCommand extends AbstractMaker
 {
+    use ConsoleHelperTrait;
+
     public const ARG_RESOURCE_CLASS = 'resourceClass';
     public const OPT_FORCE = 'force';
     public const OPT_PERMISSIONS = 'permissions';
@@ -82,41 +85,34 @@ class MakeAdminConfigurationCommand extends AbstractMaker
 
         $settings = new AdminGeneratorSettings();
 
-        // Todo: Make an advanced mode where you can configure those
-        $settings->formKey = $resourceKey;
-        $settings->listKey = $resourceKey;
-
         $settings->shouldAddMenuItem = $io->confirm('Do you want to have a menu entry?');
         $settings->shouldHaveEditForm = $io->confirm('Do you want to have an edit form?');
 
-        /** @var string $slug */
-        $slug =$io->ask('Enter the API slug', '/'.$resourceKey);
+        $slug = $this->askString($io, 'Enter the API slug', '/'.$resourceKey);
         $settings->slug = '/'.ltrim($slug, '/');
 
         if (str_contains($settings->slug, '_')) {
             $io->warning('Your slug contains an _ this could cause problems when generating a controller for this class. It is recommended to not use underscores in the slug.');
         }
 
+        /** @var class-string $permissionTypeClass */
+        $permissionTypeClass ="Sulu\Component\Security\Authorization\PermissionTypes";
+
         /** @var array<string> $availablePermissions */
-        $availablePermissions =
-            array_keys(
-                (new ReflectionClass("Sulu\Component\Security\Authorization\PermissionTypes"))
-                    ->getConstants()
-            );
+        $availablePermissions = array_keys((new ReflectionClass($permissionTypeClass))->getConstants());
 
         /** @var array<string> $currentOptionvalue */
         $currentOptionvalue = $input->getOption(self::OPT_PERMISSIONS);
         if ($input->isInteractive() && !$currentOptionvalue) {
 
             // Get available PermissionTypes from Sulu class
-
             $choiceQuestion = new ChoiceQuestion(
                 'Which permissions should be configurable in the admin panel? (Multiple selections are allowed: comma separated)',
                 $availablePermissions
             );
             $choiceQuestion->setMultiselect(true);
 
-            /** @var array $answer */
+            /** @var array<string> $answer */
             $answer = $io->askQuestion($choiceQuestion);
 
             $settings->permissionTypes = $answer;
@@ -125,8 +121,11 @@ class MakeAdminConfigurationCommand extends AbstractMaker
         }
 
         if ($input->hasOption(self::OPT_ADVANCED) && $input->isInteractive()) {
-            $settings->formKey = $io->ask('Form Key', $resourceKey);
-            $settings->listKey = $io->ask('List Key', $resourceKey);
+            $settings->formKey = $this->askString($io, 'Form Key', $resourceKey);
+            $settings->listKey = $this->askString($io, 'List Key', $resourceKey);
+        } else {
+            $settings->formKey = $resourceKey;
+            $settings->listKey = $resourceKey;
         }
 
         $generator->generateClass(

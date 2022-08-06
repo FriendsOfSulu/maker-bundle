@@ -4,12 +4,15 @@ namespace Mamazu\SuluMaker\ListConfiguration;
 
 use Mamazu\SuluMaker\Enums\Visibility;
 use Mamazu\SuluMaker\Property\PropertyToSuluTypeGuesser;
+use Mamazu\SuluMaker\Utils\ConsoleHelperTrait;
 use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Webmozart\Assert\Assert;
 
 class ListPropertyInfoProvider
 {
+    use ConsoleHelperTrait;
+
     public function __construct(
         private /* readonly */ PropertyToSuluTypeGuesser $typeGuesser
     ) {
@@ -52,8 +55,7 @@ class ListPropertyInfoProvider
 
             $type = $this->getType($property);
 
-            /** @var string $translation */
-            $translation = $this->io->ask('Translation', 'sulu_admin.'.$name);
+            $translation = $this->askString($this->io, 'Translation', 'sulu_admin.'.$name);
             $returnValue[$name] = new ListPropertyInfo( $name, $visibility, $searchable, $translation, $type);
         }
 
