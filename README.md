@@ -35,6 +35,8 @@ namespace App\Entity;
 class Changelog
 {
     public static $RESOURCE_KEY = 'changelog';
+    // or...
+    public const RESOURCE_KEY = 'changelog';
 
     public ?int $id = null;
     public string $name = '';
@@ -46,3 +48,21 @@ Then you can create a list configuration for this entity `bin/console make:sulu:
 ![Image](img/maker_bundle.png)
 
 Most of the values have defaults so just hitting enter on most of them works.
+
+## Feature List
+Here is a lit of features this maker provides.
+
+**Generating the List XML Configruation `make:sulu:list`**
+> The basics for this are working. This can't generate a configuration for entities with join columns.
+
+**Generating an admin class for an entity `make:sulu:admin`**
+> Basic generation is working. There needs to be more customization options though.
+
+**Generating form XML configuration `sulu:make:`**
+> TODO
+
+**Generating a controller `sulu:make:controller`**
+> TODO
+
+**Generate all of the above `sulu:make:resource`**
+> TODO
