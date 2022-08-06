@@ -5,7 +5,6 @@ namespace Mamazu\SuluMaker\AdminConfiguration;
 use Mamazu\SuluMaker\Utils\NameGenerators\ResourceKeyExtractor;
 use Mamazu\SuluMaker\Utils\NameGenerators\UniqueNameGenerator;
 use ReflectionClass;
-use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Generator;
@@ -13,13 +12,11 @@ use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Bundle\MakerBundle\Util\UseStatementGenerator;
-use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\Question;
 use Webmozart\Assert\Assert;
 
 class MakeAdminConfigurationCommand extends AbstractMaker
@@ -27,6 +24,7 @@ class MakeAdminConfigurationCommand extends AbstractMaker
     public const ARG_RESOURCE_CLASS = 'resourceClass';
     public const OPT_FORCE = 'force';
     public const OPT_PERMISSIONS = 'permissions';
+    public const OPT_ADVANCED = 'advanced';
 
     public const ADMIN_DEPENDENCIES = [
         "Sulu\Bundle\AdminBundle\Admin\Admin",
@@ -62,6 +60,7 @@ class MakeAdminConfigurationCommand extends AbstractMaker
             ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
             ->addOption(self::OPT_PERMISSIONS, null, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'List of permissions that should be configurable')
             ->addOption(self::OPT_FORCE, '-f', InputOption::VALUE_NONE, 'Force the creation of a new file even if the old one is already there')
+            ->addOption(self::OPT_ADVANCED, '-a', InputOption::VALUE_NONE, 'Show all the options. This only works for interactive prompts though')
         ;
     }
 
@@ -112,17 +111,22 @@ class MakeAdminConfigurationCommand extends AbstractMaker
             // Get available PermissionTypes from Sulu class
 
             $choiceQuestion = new ChoiceQuestion(
-                'Which permissions should be configurable in the admin panel?',
+                'Which permissions should be configurable in the admin panel? (Multiple selections are allowed: comma separated)',
                 $availablePermissions
             );
             $choiceQuestion->setMultiselect(true);
 
             /** @var array $answer */
-            $answer =$io->askQuestion($choiceQuestion);
+            $answer = $io->askQuestion($choiceQuestion);
 
             $settings->permissionTypes = $answer;
         } else {
             $settings->permissionTypes = $currentOptionvalue ?: $availablePermissions;
+        }
+
+        if ($input->hasOption(self::OPT_ADVANCED) && $input->isInteractive()) {
+            $settings->formKey = $io->ask('Form Key', $resourceKey);
+            $settings->listKey = $io->ask('List Key', $resourceKey);
         }
 
         $generator->generateClass(
