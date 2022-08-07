@@ -2,7 +2,7 @@
 
 namespace Mamazu\SuluMaker\Utils\NameGenerators;
 
-class AdminClassNameGenerator implements UniqueNameGenerator
+class ClassNameGenerator implements UniqueNameGenerator
 {
     public function __construct(
         private UniqueNameGenerator $nameGenerator
@@ -10,7 +10,7 @@ class AdminClassNameGenerator implements UniqueNameGenerator
 
     public function getUniqueName(string $className): string
     {
-        $originalClassName =$this->nameGenerator->getUniqueName($className);
+        $originalClassName = $this->nameGenerator->getUniqueName($className);
         return ucfirst(str_replace('_', '', $originalClassName));
     }
 }

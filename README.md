@@ -61,8 +61,8 @@ Here is a lit of features this maker provides.
 :white_check_mark: **Generating an admin class for an entity `make:sulu:admin`**
 > Basic generation is working. You can also disable parts of the view generation (generating a view without the edit form).
 
-:exclamation: **Generating a controller `sulu:make:controller`**
-> TODO
+:white_check_mark: **Generating a controller `sulu:make:controller`**
+> You can generate a controller with get, delete and update actions or any combination of those. And it even has some helpful tips on avoiding pitfalls with `_` in the resource key.
 
 :exclamation: **Generate all of the above `sulu:make:resource`**
 > TODO

@@ -1,8 +1,9 @@
 <?php
 
 use Mamazu\SuluMaker\AdminConfiguration\MakeAdminConfigurationCommand;
+use Mamazu\SuluMaker\ControllerMaker\MakeControllerCommand;
 use Mamazu\SuluMaker\ListConfiguration\MakeListConfigurationCommand;
-use Mamazu\SuluMaker\Utils\NameGenerators\AdminClassNameGenerator;
+use Mamazu\SuluMaker\Utils\NameGenerators\ClassNameGenerator;
 use Mamazu\SuluMaker\Utils\NameGenerators\ResourceKeyExtractor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -26,10 +27,14 @@ return function(ContainerConfigurator $configurator) {
         ;
 
     $services->set(MakeAdminConfigurationCommand::class)
-             ->arg('$nameGenerator', service(AdminClassNameGenerator::class))
+             ->arg('$nameGenerator', service(ClassNameGenerator::class))
          ;
 
-    $services->set(AdminClassNameGenerator::class)
+    $services->set(MakeControllerCommand::class)
+             ->arg('$nameGenerator', service(ClassNameGenerator::class))
+         ;
+
+    $services->set(ClassNameGenerator::class)
              ->args([
                  service(ResourceKeyExtractor::class)
              ]);
