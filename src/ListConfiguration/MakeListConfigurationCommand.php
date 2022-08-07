@@ -13,18 +13,15 @@ use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Webmozart\Assert\Assert;
 
 class MakeListConfigurationCommand extends AbstractMaker
 {
     const ARG_RESOURCE_CLASS = 'resourceClass';
-    const OPT_FORCE = 'force';
 
     public function __construct(
         private string $projectDirectory,
-        private XmlGenerator $xmlListGenerator,
         private ListPropertyInfoProvider $propertyInfoProvider,
         private UniqueNameGenerator $nameGenerator
     ) {}
@@ -43,7 +40,7 @@ class MakeListConfigurationCommand extends AbstractMaker
     {
         $command
             ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
-            ->addOption(self::OPT_FORCE, '-f', InputOption::VALUE_NONE, 'Force the creation of a new file even if the old one is already there');
+        ;
     }
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
@@ -61,22 +58,17 @@ class MakeListConfigurationCommand extends AbstractMaker
         $resourceKey = $this->nameGenerator->getUniqueName($className);
 
         $filePath = $configDirectory.'/'.$resourceKey.'.xml';
-        if (file_exists($filePath) && !$input->getOption('force')) {
-            $io->error([
-                'File already exists: '. $filePath,
-                '',
-                'If you want to overwrite this file run the command with the --'.self::OPT_FORCE.' option',
-            ]);
-            return;
-        }
-
         $io->writeln('Generating stuff for '. $className);
 
         $this->propertyInfoProvider->setIo($io);
         $properties = $this->propertyInfoProvider->provide((new ReflectionClass($className))->getProperties());
 
-        $xml = $this->xmlListGenerator->generate($resourceKey, $className, $properties);
-        file_put_contents($filePath, $xml);
+        $generator->generateFile($filePath, __DIR__.'/list_template.tpl.php', [
+            'entityClass' => $className,
+            'listKey' => $resourceKey,
+            'properties' => $properties
+        ]);
+        $generator->writeChanges();
 
         $io->success('Success');
         $io->success('');
