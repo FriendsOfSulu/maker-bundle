@@ -52,17 +52,17 @@ Most of the values have defaults so just hitting enter on most of them works.
 ## Feature List
 Here is a lit of features this maker provides.
 
-**Generating the List XML Configruation `make:sulu:list`**
+:question: **Generating the List XML Configruation `make:sulu:list`**
 > The basics for this are working. This can't generate a configuration for entities with join columns.
 
-**Generating an admin class for an entity `make:sulu:admin`**
-> Basic generation is working. There needs to be more customization options though.
-
-**Generating form XML configuration `sulu:make:`**
+:exclamation: **Generating form XML configuration `sulu:make:form`**
 > TODO
 
-**Generating a controller `sulu:make:controller`**
+:white_check_mark: **Generating an admin class for an entity `make:sulu:admin`**
+> Basic generation is working. You can also disable parts of the view generation (generating a view without the edit form).
+
+:exclamation: **Generating a controller `sulu:make:controller`**
 > TODO
 
-**Generate all of the above `sulu:make:resource`**
+:exclamation: **Generate all of the above `sulu:make:resource`**
 > TODO

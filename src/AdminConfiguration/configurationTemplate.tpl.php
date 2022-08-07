@@ -19,7 +19,6 @@ class <?= $class_name ?> extends Admin
     public const SECURITY_CONTEXT = '<?= $translationKey; ?>';
 
     public const LIST_VIEW = '<?= $translationKey; ?>.list_view';
-
 <?php if ($settings->shouldHaveEditForm) { ?>
 
     public const EDIT_FORM_VIEW = '<?= $translationKey; ?>.edit_form';
@@ -92,7 +91,9 @@ class <?= $class_name ?> extends Admin
                 ->setResourceKey('<?= $resourceKey ?>')
                 ->setFormKey('<?= $settings->formKey ?>')
                 ->setTabTitle('sulu_admin.details')
+<?php if ($settings->shouldHaveEditForm) { ?>
                 ->setEditView(static::EDIT_FORM_VIEW)
+<?php } ?>
                 ->addToolbarActions($formToolbarActions)
                 ->setParent(static::ADD_FORM_VIEW)
         );
