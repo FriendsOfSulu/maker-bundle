@@ -9,7 +9,7 @@ composer require --dev mamazu/sulu-maker
 ```
 
 ## How to use
-This plugin needs the configuration directory of Sulu to be under `%kernel.proejct_dir%/config/` which for a standard Sulu installation is the case.
+This plugin needs the configuration directory of Sulu to be under `%kernel.project_dir%/config/` which for a standard Sulu installation is the case.
 
 ### Example Usage
 Create an entity (either manually or with the symfony maker bundle included here).
