@@ -38,7 +38,7 @@ Then you can create a list configuration for this entity `bin/console make:sulu:
 Most of the values have defaults so just hitting enter on most of them works.
 
 ## Feature List
-Here is a lit of features this maker provides.
+Here is a list of features this maker provides.
 
 :question: **Generating the List XML Configruation `make:sulu:list`**
 > The basics for this are working. This can't generate a configuration for entities with join columns.
