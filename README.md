@@ -1,6 +1,6 @@
 # Sulu Maker Bundle
 
-This package adds makers for Sulu Configurations (eg. list or form XML).
+This package adds makers for Sulu Configurations (eg. list or form XML) but can also generate Controller and Admin PHP classes.
 
 ## How to install
 Installing it with composer is very easy:
