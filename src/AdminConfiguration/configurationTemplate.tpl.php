@@ -36,7 +36,7 @@ class <?= $class_name ?> extends Admin
 <?php if ($settings->shouldAddMenuItem) { ?>
     public function configureNavigationItems(NavigationItemCollection $navigationItemCollection): void
     {
-        if (!$this->securityChecker->hasPermission(static::SECURITY_CONTEXT, PermissionTypes::EDIT)) {
+        if (!$this->securityChecker->hasPermission(static::SECURITY_CONTEXT, PermissionTypes::VIEW)) {
             return;
         }
 
@@ -50,7 +50,7 @@ class <?= $class_name ?> extends Admin
 
     public function configureViews(ViewCollection $viewCollection): void
     {
-        if (!$this->securityChecker->hasPermission(static::SECURITY_CONTEXT, PermissionTypes::EDIT)) {
+        if (!$this->securityChecker->hasPermission(static::SECURITY_CONTEXT, PermissionTypes::VIEW)) {
             return;
         }
 
