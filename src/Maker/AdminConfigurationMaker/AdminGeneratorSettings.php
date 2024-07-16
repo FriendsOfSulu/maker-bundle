@@ -1,6 +1,6 @@
 <?php
 
-namespace Mamazu\SuluMaker\AdminConfiguration;
+namespace FriendsOfSulu\MakerBundle\Maker\AdminConfigurationMaker;
 
 class AdminGeneratorSettings
 {
@@ -9,6 +9,8 @@ class AdminGeneratorSettings
     public bool $shouldHaveEditForm = true;
 
     public bool $shouldHaveAddForm = true;
+
+    public bool $shouldHaveReferences = true;
 
     public string $slug;
 

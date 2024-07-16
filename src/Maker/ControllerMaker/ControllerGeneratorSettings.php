@@ -1,6 +1,6 @@
 <?php
 
-namespace Mamazu\SuluMaker\ControllerMaker;
+namespace FriendsOfSulu\MakerBundle\Maker\ControllerMaker;
 
 class ControllerGeneratorSettings
 {

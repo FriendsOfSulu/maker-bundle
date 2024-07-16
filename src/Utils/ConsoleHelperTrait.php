@@ -1,6 +1,6 @@
 <?php
 
-namespace Mamazu\SuluMaker\Utils;
+namespace FriendsOfSulu\MakerBundle\Utils;
 
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Component\Console\Input\InputInterface;

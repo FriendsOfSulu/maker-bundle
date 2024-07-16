@@ -1,5 +1,5 @@
 <?php
-/** @var Mamazu\SuluMaker\AdminConfiguration\AdminGeneratorSettings $settings */
+/** @var FriendsOfSulu\MakerBundle\Maker\AdminConfigurationMaker\AdminGeneratorSettings $settings */
 /** @var string $resourceKey */
 /** @var string $namespace */
 /** @var string $class_name */
@@ -31,6 +31,9 @@ class <?= $class_name ?> extends Admin
     public function __construct(
         private SecurityCheckerInterface $securityChecker,
         private ViewBuilderFactoryInterface $viewBuilderFactory
+<?php if ($settings->shouldHaveReferences) { ?>
+        private ReferenceViewBuilderFactoryInterface $referenceViewBuilderFactory,
+<?php } ?>
     ) {}
 
 <?php if ($settings->shouldAddMenuItem) { ?>
@@ -41,7 +44,6 @@ class <?= $class_name ?> extends Admin
         }
 
         $menuItem = new NavigationItem('app.menu.<?= $resourceKey ?>');
-        $menuItem->setPosition(30);
         $menuItem->setView(static::LIST_VIEW);
 
         $navigationItemCollection->get(Admin::SETTINGS_NAVIGATION_ITEM)->addChild($menuItem);
@@ -115,6 +117,32 @@ class <?= $class_name ?> extends Admin
                 ->addToolbarActions($formToolbarActions)
                 ->setParent(static::EDIT_FORM_VIEW)
         );
+    <?php } ?>
+
+<?php if ($settings->shouldHaveReferences) { ?>
+            if ($this->referenceViewBuilderFactory->hasReferenceListPermission()) {
+                $insightsResourceTabViewName = static::EDIT_TABS_VIEW.'.insights';
+
+                $viewCollection->add(
+                    $this->viewBuilderFactory
+                        ->createResourceTabViewBuilder($insightsResourceTabViewName, '/insights')
+                        ->setResourceKey(ListingTile::RESOURCE_KEY)
+                        ->setTabOrder(6144)
+                        ->setTabTitle('sulu_admin.insights')
+                        ->setTitleProperty('')
+                        ->setParent(static::EDIT_TABS_VIEW),
+                );
+
+                $viewCollection->add(
+                    $this->referenceViewBuilderFactory
+                        ->createReferenceListViewBuilder(
+                            $insightsResourceTabViewName.'.reference',
+                            '/references',
+                            ListingTile::RESOURCE_KEY,
+                        )
+                        ->setParent($insightsResourceTabViewName),
+                );
+            }
     <?php } ?>
     }
 

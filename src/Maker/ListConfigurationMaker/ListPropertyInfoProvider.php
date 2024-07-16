@@ -1,10 +1,10 @@
 <?php
 
-namespace Mamazu\SuluMaker\ListConfiguration;
+namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
-use Mamazu\SuluMaker\Enums\Visibility;
-use Mamazu\SuluMaker\Property\PropertyToSuluTypeGuesser;
-use Mamazu\SuluMaker\Utils\ConsoleHelperTrait;
+use FriendsOfSulu\MakerBundle\Enums\Visibility;
+use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesser;
+use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
 use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Webmozart\Assert\Assert;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mamazu\SuluMaker\ListConfiguration;
+namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
-use Mamazu\SuluMaker\Utils\NameGenerators\UniqueNameGenerator;
+use FriendsOfSulu\MakerBundle\Utils\NameGenerators\UniqueNameGenerator;
 use ReflectionClass;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;

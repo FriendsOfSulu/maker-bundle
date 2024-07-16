@@ -1,6 +1,6 @@
 <?php
 
-namespace Mamazu\SuluMaker\Property;
+namespace FriendsOfSulu\MakerBundle\Property;
 
 use DateTimeInterface;
 use ReflectionProperty;

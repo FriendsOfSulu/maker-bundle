@@ -1,6 +1,6 @@
 <?php
 
-use Mamazu\SuluMaker\ListConfiguration\ListPropertyInfo;
+use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\ListPropertyInfo;
 /**
  * @var string $listKey
  * @var string $entityClass

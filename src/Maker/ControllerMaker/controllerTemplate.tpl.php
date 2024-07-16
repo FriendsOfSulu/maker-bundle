@@ -1,6 +1,6 @@
 <?php
 /**
-* @var Mamazu\SuluMaker\ControllerMaker\ControllerGeneratorSettings $settings
+* @var FriendsOfSulu\MakerBundle\Maker\ControllerMaker\ControllerGeneratorSettings $settings
 * @var string $resourceKey
 * @var string $resourceClass
 * @var string $namespace

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mamazu\SuluMaker\ListConfiguration;
+namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
-use Mamazu\SuluMaker\Enums\Visibility;
+use FriendsOfSulu\MakerBundle\Enums\Visibility;
 
 class ListPropertyInfo
 {

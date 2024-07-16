@@ -1,10 +1,10 @@
 <?php
 
-namespace Mamazu\SuluMaker\AdminConfiguration;
+namespace FriendsOfSulu\MakerBundle\Maker\AdminConfigurationMaker;
 
-use Mamazu\SuluMaker\Utils\ConsoleHelperTrait;
-use Mamazu\SuluMaker\Utils\NameGenerators\ResourceKeyExtractor;
-use Mamazu\SuluMaker\Utils\NameGenerators\UniqueNameGenerator;
+use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
+use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ResourceKeyExtractor;
+use FriendsOfSulu\MakerBundle\Utils\NameGenerators\UniqueNameGenerator;
 use ReflectionClass;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
@@ -87,6 +87,11 @@ class MakeAdminConfigurationCommand extends AbstractMaker
 
         $settings->shouldAddMenuItem = $io->confirm('Do you want to have a menu entry?');
         $settings->shouldHaveEditForm = $io->confirm('Do you want to have an edit form?');
+        $settings->shouldHaveReferences = $io->confirm('Do you want to have an a references tab?');
+
+        if ($settings->shouldHaveReferences) {
+            $useStatements->addUseStatement('Sulu\Bundle\ReferenceBundle\Infrastructure\Sulu\Admin\View\ReferenceViewBuilderFactoryInterface');
+        }
 
         $slug = $this->askString($io, 'Enter the API slug', '/'.$resourceKey);
         $settings->slug = '/'.ltrim($slug, '/');

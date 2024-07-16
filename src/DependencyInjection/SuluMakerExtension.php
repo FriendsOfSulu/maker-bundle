@@ -1,6 +1,6 @@
 <?php
 
-namespace Mamazu\SuluMaker\DependencyInjection;
+namespace FriendsOfSulu\MakerBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

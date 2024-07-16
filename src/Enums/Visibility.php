@@ -1,6 +1,6 @@
 <?php
 
-namespace Mamazu\SuluMaker\Enums;
+namespace FriendsOfSulu\MakerBundle\Enums;
 
 use MyCLabs\Enum\Enum;
 

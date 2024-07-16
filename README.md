@@ -5,7 +5,7 @@ This package adds makers for Sulu Configurations (eg. list or form XML) but can 
 ## How to install
 Installing it with composer is very easy:
 ```bash
-composer require --dev mamazu/sulu-maker
+composer require --dev friendsofsulu/maker-bundle
 ```
 
 ## How to use

@@ -1,10 +1,10 @@
 <?php
 
-namespace Mamazu\SuluMaker\ControllerMaker;
+namespace FriendsOfSulu\MakerBundle\Maker\ControllerMaker;
 
-use Mamazu\SuluMaker\Utils\ConsoleHelperTrait;
-use Mamazu\SuluMaker\Utils\NameGenerators\ResourceKeyExtractor;
-use Mamazu\SuluMaker\Utils\NameGenerators\UniqueNameGenerator;
+use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
+use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ResourceKeyExtractor;
+use FriendsOfSulu\MakerBundle\Utils\NameGenerators\UniqueNameGenerator;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Generator;

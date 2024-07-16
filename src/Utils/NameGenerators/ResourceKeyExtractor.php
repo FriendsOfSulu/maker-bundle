@@ -1,6 +1,6 @@
 <?php
 
-namespace Mamazu\SuluMaker\Utils\NameGenerators;
+namespace FriendsOfSulu\MakerBundle\Utils\NameGenerators;
 
 use ReflectionClass;
 use Webmozart\Assert\Assert;
