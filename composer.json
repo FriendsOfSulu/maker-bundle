@@ -11,7 +11,8 @@
     "require-dev": {
         "phpunit/phpunit": "^9.6.20",
         "phpstan/phpstan": "^1.11.7",
-        "phpstan/phpstan-webmozart-assert": "^1.2.7"
+        "phpstan/phpstan-webmozart-assert": "^1.2.7",
+        "php-cs-fixer/shim": "^3.14"
     },
     "license": "MIT",
     "autoload": {
@@ -22,6 +23,9 @@
     "scripts": {
         "analyse": [
             "vendor/bin/phpstan"
+        ],
+        "fix": [
+            "vendor/bin/php-cs-fixer fix src"
         ]
     },
     "authors": [

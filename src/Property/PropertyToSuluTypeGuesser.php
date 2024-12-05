@@ -12,7 +12,7 @@ class PropertyToSuluTypeGuesser
     public function getPossibleTypes(ReflectionProperty $property): array
     {
         /** @var ReflectionNamedType|null $propertyType */
-        $propertyType =$property->getType();
+        $propertyType = $property->getType();
         $typeName = $propertyType?->getName();
         if ($typeName === 'bool') {
             return ['checkbox' => 'Renders a checkbox'];

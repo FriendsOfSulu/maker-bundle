@@ -6,7 +6,8 @@ class ClassNameGenerator implements UniqueNameGenerator
 {
     public function __construct(
         private UniqueNameGenerator $nameGenerator
-    ) {}
+    ) {
+    }
 
     public function getUniqueName(string $className): string
     {

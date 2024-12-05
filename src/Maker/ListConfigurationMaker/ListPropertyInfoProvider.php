@@ -21,7 +21,8 @@ class ListPropertyInfoProvider
 
     private ?ConsoleStyle $io = null;
 
-    public function setIo(ConsoleStyle $io): void {
+    public function setIo(ConsoleStyle $io): void
+    {
         $this->io = $io;
     }
 
@@ -30,15 +31,18 @@ class ListPropertyInfoProvider
      *
      * @return array<ListPropertyInfo>
      */
-    public function provide(array $properties): array {
+    public function provide(array $properties): array
+    {
         Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
         $returnValue = [];
 
         $returnValue[] = new ListPropertyInfo('id', Visibility::from(Visibility::NO), false, 'sulu_admin.id');
 
-        foreach($properties as $property) {
+        foreach ($properties as $property) {
             $name = $property->getName();
-            if ($property->isStatic() || $name === 'id') { continue; }
+            if ($property->isStatic() || $name === 'id') {
+                continue;
+            }
 
             $this->io->info(sprintf('Configuring property: "%s"', $name));
             if (!$this->io->confirm(sprintf('Should this property "%s" be configured', $name))) {
@@ -56,13 +60,14 @@ class ListPropertyInfoProvider
             $type = $this->getType($property);
 
             $translation = $this->askString($this->io, 'Translation', 'sulu_admin.'.$name);
-            $returnValue[$name] = new ListPropertyInfo( $name, $visibility, $searchable, $translation, $type);
+            $returnValue[$name] = new ListPropertyInfo($name, $visibility, $searchable, $translation, $type);
         }
 
         return $returnValue;
     }
 
-    private function getType(ReflectionProperty $property): ?string {
+    private function getType(ReflectionProperty $property): ?string
+    {
         Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
 
         if ($property->getType() === null) {

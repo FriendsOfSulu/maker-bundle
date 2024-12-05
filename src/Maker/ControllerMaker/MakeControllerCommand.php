@@ -37,7 +37,8 @@ class MakeControllerCommand extends AbstractMaker
     public function __construct(
         private ResourceKeyExtractor $resourceKeyExtractor,
         private UniqueNameGenerator $nameGenerator
-    ) {}
+    ) {
+    }
 
     public static function getCommandName(): string
     {
@@ -49,7 +50,8 @@ class MakeControllerCommand extends AbstractMaker
         return self::getCommandDescription();
     }
 
-    public static function getCommandDescription(): string{
+    public static function getCommandDescription(): string
+    {
         return 'Create a controller that fetches data from the api';
     }
 
@@ -76,12 +78,12 @@ class MakeControllerCommand extends AbstractMaker
 
         $routeResource = $resourceKey;
         if (str_contains($resourceKey, '_')) {
-            if(!$input->getOption(self::ESCAPE_ROUTEKEY)) {
+            if (!$input->getOption(self::ESCAPE_ROUTEKEY)) {
                 $io->warning('Your resource key "'.$resourceKey.'" contains an underscore. If this is used as a route key this will generate routes like this: "'. str_replace('_', '/', $resourceClass). '". This is normally unwanted behaviour. ');
             }
 
             if ($input->getOption(self::ESCAPE_ROUTEKEY) || $io->confirm('Should the underscores (_) be removed?')) {
-                $routeResource = str_replace('_', '' ,$resourceKey);
+                $routeResource = str_replace('_', '', $resourceKey);
                 $io->info('Removed underscore in route key');
             }
         }
@@ -158,4 +160,3 @@ YAML
         return $settings;
     }
 }
-

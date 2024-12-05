@@ -41,7 +41,8 @@ class MakeAdminConfigurationCommand extends AbstractMaker
     public function __construct(
         private ResourceKeyExtractor $resourceKeyExtractor,
         private UniqueNameGenerator $nameGenerator
-    ) {}
+    ) {
+    }
 
     public static function getCommandName(): string
     {
@@ -53,7 +54,8 @@ class MakeAdminConfigurationCommand extends AbstractMaker
         return self::getCommandDescription();
     }
 
-    public static function getCommandDescription(): string{
+    public static function getCommandDescription(): string
+    {
         return 'Create a list view configuration for your entity';
     }
 
@@ -61,7 +63,7 @@ class MakeAdminConfigurationCommand extends AbstractMaker
     {
         $command
             ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
-            ->addOption(self::OPT_PERMISSIONS, null, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'List of permissions that should be configurable')
+            ->addOption(self::OPT_PERMISSIONS, null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'List of permissions that should be configurable')
             ->addOption(self::OPT_FORCE, '-f', InputOption::VALUE_NONE, 'Force the creation of a new file even if the old one is already there')
             ->addOption(self::OPT_ADVANCED, '-a', InputOption::VALUE_NONE, 'Show all the options. This only works for interactive prompts though')
         ;
@@ -76,11 +78,13 @@ class MakeAdminConfigurationCommand extends AbstractMaker
         $generatedClassName = 'App\\Admin\\'.$this->nameGenerator->getUniqueName($className).'Admin';
 
         $useStatements = new UseStatementGenerator(
-            array_merge(self::ADMIN_DEPENDENCIES,
-            [
+            array_merge(
+                self::ADMIN_DEPENDENCIES,
+                [
                 "Sulu\Component\Security\Authorization\PermissionTypes",
                 "Sulu\Component\Security\Authorization\SecurityCheckerInterface",
-            ])
+            ]
+            )
         );
 
         $settings = new AdminGeneratorSettings();
@@ -101,7 +105,7 @@ class MakeAdminConfigurationCommand extends AbstractMaker
         }
 
         /** @var class-string $permissionTypeClass */
-        $permissionTypeClass ="Sulu\Component\Security\Authorization\PermissionTypes";
+        $permissionTypeClass = "Sulu\Component\Security\Authorization\PermissionTypes";
 
         /** @var array<string> $availablePermissions */
         $availablePermissions = array_keys((new ReflectionClass($permissionTypeClass))->getConstants());
@@ -153,4 +157,3 @@ class MakeAdminConfigurationCommand extends AbstractMaker
         }
     }
 }
-

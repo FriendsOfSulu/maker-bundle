@@ -57,12 +57,12 @@ class <?= $class_name ?> extends Admin
         }
 
         $formToolbarActions = [
-<?php foreach($settings->formToolbarActions as $actionName) { ?>
+<?php foreach ($settings->formToolbarActions as $actionName) { ?>
             new ToolbarAction('sulu_admin.<?= $actionName ?>'),
 <?php } ?>
         ];
         $listToolbarActions = [
-<?php foreach($settings->listToolbarActions as $actionName) { ?>
+<?php foreach ($settings->listToolbarActions as $actionName) { ?>
             new ToolbarAction('sulu_admin.<?= $actionName ?>'),
 <?php } ?>
         ];
@@ -152,7 +152,7 @@ class <?= $class_name ?> extends Admin
             self::SULU_ADMIN_SECURITY_SYSTEM => [
                 'Settings' => [
                     static::SECURITY_CONTEXT => [
-<?php foreach($settings->permissionTypes as $permissionType) { ?>
+<?php foreach ($settings->permissionTypes as $permissionType) { ?>
                         PermissionTypes::<?= $permissionType ?>,
 <?php } ?>
                     ],

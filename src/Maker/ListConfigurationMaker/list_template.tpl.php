@@ -1,6 +1,7 @@
 <?php
 
 use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\ListPropertyInfo;
+
 /**
  * @var string $listKey
  * @var string $entityClass
@@ -12,20 +13,20 @@ echo '<?xml version="1.0" ?>';
 <list xmlns="http://schemas.sulu.io/list-builder/list">
     <key><?= $listKey ?></key>
     <properties>
-<?php foreach($properties as $property) {
+<?php foreach ($properties as $property) {
     $additionlAttributes = '';
     if ($property->visibility->isVisible()) {
-        $searchability = $property->searchability ? 'yes': 'no';
-        $additionlAttributes .= sprintf('searchability="%s" ', $searchability);
+        $searchability = $property->searchability ? 'yes' : 'no';
+        $additionlAttributes .= sprintf('searchability="%s"', $searchability);
     }
-?>
+    $additionlAttributes .= "\n";
+    ?>
         <property
             name="<?= $property->name ?>"
             visibility="<?= $property->visibility ?>"
             translation="<?= $property->translations ?>"
             <?= ($property->type) ? ('type="' . $property->type . '"') : '' ?>
-
-         <?= $additionlAttributes ?>
+            <?= $additionlAttributes ?>
         >
             <field-name><?= $property->name ?></field-name>
             <entity-name><?= $entityClass ?></entity-name>

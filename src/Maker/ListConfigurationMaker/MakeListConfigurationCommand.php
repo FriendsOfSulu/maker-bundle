@@ -6,25 +6,30 @@ use FriendsOfSulu\MakerBundle\Utils\NameGenerators\UniqueNameGenerator;
 use ReflectionClass;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
+use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
 use Symfony\Bundle\MakerBundle\Str;
+use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Webmozart\Assert\Assert;
 
 class MakeListConfigurationCommand extends AbstractMaker
 {
-    const ARG_RESOURCE_CLASS = 'resourceClass';
+    public const ARG_RESOURCE_CLASS = 'resourceClass';
 
     public function __construct(
         private string $projectDirectory,
+        private DoctrineHelper $doctrineHelper,
         private ListPropertyInfoProvider $propertyInfoProvider,
         private UniqueNameGenerator $nameGenerator
-    ) {}
+    ) {
+    }
 
     public static function getCommandName(): string
     {
@@ -39,8 +44,24 @@ class MakeListConfigurationCommand extends AbstractMaker
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
         $command
-            ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
+            ->addArgument(
+                self::ARG_RESOURCE_CLASS,
+                InputArgument::OPTIONAL,
+                sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())),
+            )
         ;
+
+        $inputConfig->setArgumentAsNonInteractive(self::ARG_RESOURCE_CLASS);
+    }
+
+    public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
+    {
+        $entityQuestion = new Question("What entity do you want to generate the list view for");
+        $entityQuestion->setValidator(Validator::notBlank(...));
+        $entityQuestion->setAutocompleterValues($this->doctrineHelper->getEntitiesForAutocomplete());
+
+        $className = $this->doctrineHelper->getEntityNamespace().'\\'.$io->askQuestion($entityQuestion);
+        $input->setArgument(self::ARG_RESOURCE_CLASS, $className);
     }
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
@@ -56,8 +77,14 @@ class MakeListConfigurationCommand extends AbstractMaker
         Assert::classExists($className, 'Class does not exist. Please provide an existing entity');
 
         $resourceKey = $this->nameGenerator->getUniqueName($className);
-
         $filePath = $configDirectory.'/'.$resourceKey.'.xml';
+        if (file_exists($filePath)) {
+            if (!$io->confirm("The list configuration under '$filePath' already exists. Do you want to overwrite it?")) {
+                return;
+            }
+            unlink($filePath);
+        }
+
         $io->writeln('Generating stuff for '. $className);
 
         $this->propertyInfoProvider->setIo($io);
@@ -72,7 +99,9 @@ class MakeListConfigurationCommand extends AbstractMaker
 
         $io->success('Success');
         $io->success('');
-        $io->success('Generated file can be found under: '. $filePath);
+        foreach ($generator->getGeneratedFiles() as $file) {
+            $io->success('Generated: '. $filePath);
+        }
     }
 
     public function configureDependencies(DependencyBuilder $dependencies): void
