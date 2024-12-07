@@ -4,6 +4,7 @@ use FriendsOfSulu\MakerBundle\Maker\AdminConfigurationMaker\MakeAdminConfigurati
 use FriendsOfSulu\MakerBundle\Maker\ControllerMaker\MakeControllerCommand;
 use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\ListPropertyInfoProvider;
 use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\MakeListConfigurationCommand;
+use FriendsOfSulu\MakerBundle\Maker\SuluPageMaker\MakePageTypeCommand;
 use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesser;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ClassNameGenerator;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ResourceKeyExtractor;
@@ -21,6 +22,14 @@ return function (ContainerConfigurator $configurator) {
             service('maker.doctrine_helper'),
             service(ListPropertyInfoProvider::class),
             service(ResourceKeyExtractor::class)
+        ])
+        ->tag('maker.command')
+    ;
+
+    $services
+        ->set(MakePageTypeCommand::class)
+        ->args([
+            '%kernel.project_dir%',
         ])
         ->tag('maker.command')
     ;
