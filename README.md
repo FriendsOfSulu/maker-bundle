@@ -1,6 +1,6 @@
 # Sulu Maker Bundle
 
-This package adds makers for Sulu Configurations (eg. list or form XML) but can also generate Controller and Admin PHP classes.
+This package adds code generators for Sulu configurations and other features of Sulu to get you started quicker.
 
 ## How to install
 Installing it with composer is very easy:
@@ -8,11 +8,8 @@ Installing it with composer is very easy:
 composer require --dev friendsofsulu/maker-bundle
 ```
 
-## How to use
-This plugin needs the configuration directory of Sulu to be under `%kernel.project_dir%/config/` which for a standard Sulu installation is the case.
-
 ### Example Usage
-Create an entity (either manually or with the symfony maker bundle included here).
+Create an entity (either manually or with `make:entity`).
 ```php
 <?php
 
@@ -40,6 +37,9 @@ Most of the values have defaults so just hitting enter on most of them works.
 ## Feature List
 Here is a list of features this maker provides.
 
+:white_check_mark: **Generating a new page type `sulu:make:page-type`**
+> You can generate an XML file in the Sulu pages directory and an example template in the Twig directory.
+
 :question: **Generating the List XML Configruation `make:sulu:list`**
 > The basics for this are working. This can't generate a configuration for entities with join columns.
 
@@ -53,4 +53,10 @@ Here is a list of features this maker provides.
 > You can generate a controller with get, delete and update actions or any combination of those. And it even has some helpful tips on avoiding pitfalls with `_` in the resource key.
 
 :exclamation: **Generate all of the above `sulu:make:resource`**
+> TODO
+
+:exclamation: **Generate a Trash handler `sulu:make:trash_handler`**
+> TODO
+
+:exclamation: **Generate a Trash handler `sulu:make:resource`**
 > TODO
