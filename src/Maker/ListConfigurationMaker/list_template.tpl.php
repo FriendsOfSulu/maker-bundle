@@ -23,7 +23,7 @@ echo '<?xml version="1.0" ?>';
     ?>
         <property
             name="<?= $property->name ?>"
-            visibility="<?= $property->visibility ?>"
+            visibility="<?= $property->visibility->value ?>"
             translation="<?= $property->translations ?>"
             <?= ($property->type) ? ('type="' . $property->type . '"') : '' ?>
             <?= $additionlAttributes ?>

@@ -2,12 +2,7 @@
 
 namespace FriendsOfSulu\MakerBundle\Enums;
 
-use MyCLabs\Enum\Enum;
-
-/**
- * @template-extends Enum<string>
- */
-class Visibility extends Enum
+enum Visibility: string
 {
     public const YES = 'yes';
     public const NO = 'no';

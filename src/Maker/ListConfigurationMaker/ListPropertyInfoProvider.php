@@ -51,7 +51,9 @@ class ListPropertyInfoProvider
                 continue;
             }
 
-            $visibility = Visibility::from($this->io->choice('Visible?', Visibility::descriptions(), 'yes'));
+            /** @var string $choice */
+            $choice = $this->io->choice('Visible?', Visibility::descriptions(), 'yes');
+            $visibility = Visibility::from($choice);
 
             $searchable = false;
             if ($visibility->isVisible()) {
