@@ -37,3 +37,6 @@ jobs:
 
     - name: Run test suite
       run: vendor/bin/phpstan
+
+    - name: Run codestyle
+      run: vendor/bin/php-cs-fixer check src
