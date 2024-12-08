@@ -15,6 +15,7 @@ use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Webmozart\Assert\Assert;
@@ -22,6 +23,7 @@ use Webmozart\Assert\Assert;
 class MakeListConfigurationCommand extends AbstractMaker
 {
     public const ARG_RESOURCE_CLASS = 'resourceClass';
+    public const OPT_ASSUME_DEFAULTS = 'assume-defaults';
 
     public function __construct(
         private string $projectDirectory,
@@ -50,6 +52,13 @@ class MakeListConfigurationCommand extends AbstractMaker
                 sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())),
             )
         ;
+        $command
+            ->addOption(
+                self::OPT_ASSUME_DEFAULTS,
+                'd',
+                InputOption::VALUE_NONE,
+                'Assuming all visible fields are searchable and use default translations.',
+            );
 
         $inputConfig->setArgumentAsNonInteractive(self::ARG_RESOURCE_CLASS);
     }
@@ -85,10 +94,13 @@ class MakeListConfigurationCommand extends AbstractMaker
             unlink($filePath);
         }
 
-        $io->writeln('Generating stuff for '. $className);
+        $io->writeln('Generating list configuration for '. $className);
+
+        /** @var bool $assumeDefaults */
+        $assumeDefaults = $input->getOption(self::OPT_ASSUME_DEFAULTS);
 
         $this->propertyInfoProvider->setIo($io);
-        $properties = $this->propertyInfoProvider->provide((new ReflectionClass($className))->getProperties());
+        $properties = $this->propertyInfoProvider->provide(new ReflectionClass($className), $assumeDefaults);
 
         $generator->generateFile($filePath, __DIR__.'/list_template.tpl.php', [
             'entityClass' => $className,

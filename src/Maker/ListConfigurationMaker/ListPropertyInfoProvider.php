@@ -5,6 +5,7 @@ namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 use FriendsOfSulu\MakerBundle\Enums\Visibility;
 use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesser;
 use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
+use ReflectionClass;
 use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Webmozart\Assert\Assert;
@@ -27,25 +28,25 @@ class ListPropertyInfoProvider
     }
 
     /**
-     * @param array<ReflectionProperty> $properties
+     * @param ReflectionClass<object> $reflectionClass
      *
      * @return array<ListPropertyInfo>
      */
-    public function provide(array $properties): array
+    public function provide(ReflectionClass $reflectionClass, bool $assumeDefaults): array
     {
         Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
-        $returnValue = [];
+        $listPropertyInfo = [];
 
-        $returnValue[] = new ListPropertyInfo('id', Visibility::from(Visibility::NO), false, 'sulu_admin.id');
+        $listPropertyInfo[] = new ListPropertyInfo('id', Visibility::from(Visibility::NO), false, 'sulu_admin.id');
 
-        foreach ($properties as $property) {
+        foreach ($reflectionClass->getProperties() as $property) {
             $name = $property->getName();
             if ($property->isStatic() || $name === 'id') {
                 continue;
             }
 
             $this->io->info(sprintf('Configuring property: "%s"', $name));
-            if (!$this->io->confirm(sprintf('Should this property "%s" be configured', $name))) {
+            if (!$assumeDefaults && !$this->io->confirm(sprintf('Should this property "%s" be configured', $name))) {
                 $this->io->info(sprintf('Property "%s" skipped', $name));
                 continue;
             }
@@ -54,16 +55,20 @@ class ListPropertyInfoProvider
 
             $searchable = false;
             if ($visibility->isVisible()) {
-                $searchable = $this->io->confirm('Searchable?');
+                $searchable = $assumeDefaults || $this->io->confirm('Searchable?');
             }
 
             $type = $this->getType($property);
 
-            $translation = $this->askString($this->io, 'Translation', 'sulu_admin.'.$name);
-            $returnValue[$name] = new ListPropertyInfo($name, $visibility, $searchable, $translation, $type);
+            if ($assumeDefaults) {
+                $translation = 'sulu_admin.'.$name;
+            } else {
+                $translation = $this->askString($this->io, 'Translation', 'sulu_admin.'.$name);
+            }
+            $listPropertyInfo[] = new ListPropertyInfo($name, $visibility, $searchable, $translation, $type);
         }
 
-        return $returnValue;
+        return $listPropertyInfo;
     }
 
     private function getType(ReflectionProperty $property): ?string

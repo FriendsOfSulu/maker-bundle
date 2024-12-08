@@ -23,7 +23,7 @@ class MakePageTypeCommand extends AbstractMaker
 
     public function __construct(
         private string $projectDirectory
-    ){
+    ) {
     }
 
     public static function getCommandName(): string
