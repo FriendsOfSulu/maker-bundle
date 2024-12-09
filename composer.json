@@ -2,6 +2,10 @@
     "name": "friendsofsulu/maker-bundle",
     "description": "Package to generate configuration and boilerplate code in Sulu",
     "type": "library",
+    "keywords": [
+        "maker-bundle",
+        "sulu"
+    ],
     "require": {
         "php": ">=8.2",
         "symfony/maker-bundle": "^v1.60.0",
@@ -18,6 +22,9 @@
         "psr-4": {
             "FriendsOfSulu\\MakerBundle\\": "src/"
         }
+    },
+    "config": {
+        "sort-packages": true
     },
     "scripts": {
         "analyse": [
