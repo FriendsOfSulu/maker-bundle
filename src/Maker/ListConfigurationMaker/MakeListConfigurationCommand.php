@@ -23,7 +23,9 @@ use Webmozart\Assert\Assert;
 class MakeListConfigurationCommand extends AbstractMaker
 {
     public const ARG_RESOURCE_CLASS = 'resourceClass';
+    public const ARG_LIST_DIRECTORY = 'configDir';
     public const OPT_ASSUME_DEFAULTS = 'assume-defaults';
+    public const LIST_DIRECTORY = 'config/lists';
 
     public function __construct(
         private string $projectDirectory,
@@ -51,8 +53,12 @@ class MakeListConfigurationCommand extends AbstractMaker
                 InputArgument::OPTIONAL,
                 sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())),
             )
-        ;
-        $command
+            ->addArgument(
+                self::ARG_LIST_DIRECTORY,
+                InputArgument::OPTIONAL,
+                'Directory for list configurations',
+                $this->projectDirectory.'/config/lists',
+            )
             ->addOption(
                 self::OPT_ASSUME_DEFAULTS,
                 'd',
@@ -75,11 +81,13 @@ class MakeListConfigurationCommand extends AbstractMaker
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
     {
-        // TODO: Better way of finding the config directory
-        $configDirectory = $this->projectDirectory.'/config/lists';
+        /** @var string $configDirectory */
+        $configDirectory = $input->getArgument(self::ARG_LIST_DIRECTORY);
         if (!file_exists($configDirectory)) {
             throw new FileNotFoundException('Could not find config directory: ' . $configDirectory);
         }
+
+        $io->info('Using config directory: ' . $configDirectory);
 
         /** @var string $className */
         $className = $input->getArgument(self::ARG_RESOURCE_CLASS);
@@ -109,11 +117,7 @@ class MakeListConfigurationCommand extends AbstractMaker
         ]);
         $generator->writeChanges();
 
-        $io->success('Success');
-        $io->success('');
-        foreach ($generator->getGeneratedFiles() as $file) {
-            $io->success('Generated: '. $filePath);
-        }
+        $io->success('Successfully generated list configuration.');
     }
 
     public function configureDependencies(DependencyBuilder $dependencies): void

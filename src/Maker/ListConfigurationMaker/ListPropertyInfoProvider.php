@@ -35,9 +35,9 @@ class ListPropertyInfoProvider
     public function provide(ReflectionClass $reflectionClass, bool $assumeDefaults): array
     {
         Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
-        $listPropertyInfo = [];
-
-        $listPropertyInfo[] = new ListPropertyInfo('id', Visibility::from(Visibility::NO), false, 'sulu_admin.id');
+        $listPropertyInfo = [
+            new ListPropertyInfo('id', Visibility::NO, false, 'sulu_admin.id'),
+        ];
 
         foreach ($reflectionClass->getProperties() as $property) {
             $name = $property->getName();
