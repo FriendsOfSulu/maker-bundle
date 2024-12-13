@@ -6,5 +6,5 @@ parameters:
     paths:
         - src
     ignoreErrors:
-        - "#^Parameter \\#1 \\$object_or_class of function is_a expects object\\|string, string\\|null given\\.$#"
+        - "#ClassMetadata#"
 

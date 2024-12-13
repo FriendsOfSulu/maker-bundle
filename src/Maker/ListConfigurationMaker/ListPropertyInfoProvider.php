@@ -4,18 +4,18 @@ namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
 use FriendsOfSulu\MakerBundle\Enums\Visibility;
 use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesser;
+use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesserInterface;
 use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
-use ReflectionClass;
-use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Webmozart\Assert\Assert;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 
 class ListPropertyInfoProvider
 {
     use ConsoleHelperTrait;
 
     public function __construct(
-        private /* readonly */ PropertyToSuluTypeGuesser $typeGuesser
+        private /* readonly */ PropertyToSuluTypeGuesserInterface $typeGuesser
     ) {
 
     }
@@ -28,61 +28,106 @@ class ListPropertyInfoProvider
     }
 
     /**
-     * @param ReflectionClass<object> $reflectionClass
-     *
-     * @return array<ListPropertyInfo>
+     * @return array{properties: array<ListPropertyInfo>, joins: array<ListJoinInfo>}
      */
-    public function provide(ReflectionClass $reflectionClass, bool $assumeDefaults): array
+    public function provide(ClassMetadata $reflectionClass, bool $assumeDefaults): array
     {
-        Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
-        $listPropertyInfo = [
-            new ListPropertyInfo('id', Visibility::NO, false, 'sulu_admin.id'),
-        ];
+        $properties = [];
 
-        foreach ($reflectionClass->getProperties() as $property) {
-            $name = $property->getName();
-            if ($property->isStatic() || $name === 'id') {
-                continue;
+        foreach ($reflectionClass->fieldMappings as $name => $mapping) {
+            if (null !== ($property = $this->provideProperty($name, $mapping, $assumeDefaults))) {
+                $properties[] = $property;
             }
-
-            $this->io->info(sprintf('Configuring property: "%s"', $name));
-            if (!$assumeDefaults && !$this->io->confirm(sprintf('Should this property "%s" be configured', $name))) {
-                $this->io->info(sprintf('Property "%s" skipped', $name));
-                continue;
-            }
-
-            /** @var string $choice */
-            $choice = $this->io->choice('Visible?', Visibility::descriptions(), 'yes');
-            $visibility = Visibility::from($choice);
-
-            $searchable = false;
-            if ($visibility->isVisible()) {
-                $searchable = $assumeDefaults || $this->io->confirm('Searchable?');
-            }
-
-            $type = $this->getType($property);
-
-            if ($assumeDefaults) {
-                $translation = 'sulu_admin.'.$name;
-            } else {
-                $translation = $this->askString($this->io, 'Translation', 'sulu_admin.'.$name);
-            }
-            $listPropertyInfo[] = new ListPropertyInfo($name, $visibility, $searchable, $translation, $type);
         }
 
-        return $listPropertyInfo;
+        $joins = [];
+        foreach ($reflectionClass->associationMappings as $mapping) {
+            if (null !== ($join = $this->provideJoin($mapping, $assumeDefaults))) {
+                $joins[] = $join;
+            }
+        }
+
+        return ['properties' => $properties, 'joins' => $joins];
     }
 
-    private function getType(ReflectionProperty $property): ?string
+    /**
+     * @param array{id?: true, type?: string} $mapping
+     */
+    protected function provideProperty(string $name, array $mapping, bool $assumeDefaults): ?ListPropertyInfo
     {
         Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
 
-        if ($property->getType() === null) {
-            $this->io->note('There is no PHP type configured for this property. Assuming it is a string.');
+        // If it's a primary identifier (like id) we don't want to show that.
+        if ($mapping['id'] ?? false) {
+            return new ListPropertyInfo($name, Visibility::NO, false, 'sulu_admin.'.$name);
+        }
+
+        $this->io->info(sprintf('Configuring property: "%s"', $name));
+        if (!$assumeDefaults && !$this->io->confirm(sprintf('Should this property "%s" be configured', $name))) {
+            $this->io->info(sprintf('Property "%s" skipped', $name));
             return null;
         }
 
-        $possibleTypes = $this->typeGuesser->getPossibleTypes($property);
+        /** @var Visibility $visibility */
+        $visibility = $this->askEnum($this->io, 'Visible?', Visibility::class, Visibility::YES);
+
+        $searchable = false;
+        if ($visibility->isVisible()) {
+            $searchable = $assumeDefaults || $this->io->confirm('Searchable?');
+        }
+
+        $type = $this->getType($mapping['type'] ?? 'string');
+
+        if ($assumeDefaults) {
+            $translation = 'sulu_admin.'.$name;
+        } else {
+            $translation = $this->askString($this->io, 'Translation', 'sulu_admin.'.$name);
+        }
+
+        return new ListPropertyInfo($name, $visibility, $searchable, $translation, $type);
+    }
+
+    /**
+     * @param array{fieldName: string, sourceEntity: string} $mapping
+    */
+    protected function provideJoin(array $mapping, bool $assumeDefaults): ?ListJoinInfo
+    {
+        Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
+
+        $name = $mapping['fieldName'];
+        if (!$this->io->confirm(sprintf('Should this association "%s" be configured', $name))) {
+            $this->io->info(sprintf('Association "%s" skipped', $name));
+            return null;
+        }
+
+        $joinType = JoinType::INNER;
+        if (!$assumeDefaults) {
+            /** @var JoinType $joinType */
+            $joinType = $this->askEnum($this->io, 'What type of join should be used', JoinType::class, JoinType::INNER);
+        }
+
+        $condition = $this->askString($this->io, 'Additional condition (leave empty for none)', '');
+        if ($condition === '') {
+            $condition = null;
+            $conditionType = null;
+        } else {
+            $conditionType = $this->askEnum($this->io, 'What type of condition should be used', ConditionType::class, ConditionType::ON);
+        }
+
+        return new ListJoinInfo(
+            $name,
+            $mapping['sourceEntity'].'.'.$name,
+            $joinType,
+            $condition,
+            $conditionType,
+        );
+    }
+
+    private function getType(string $doctrineType): ?string
+    {
+        Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
+
+        $possibleTypes = $this->typeGuesser->getPossibleTypes($doctrineType);
         if ($possibleTypes === []) {
             $this->io->note('Could not find any suggestions for the PHP Type of the property. You can extend the class '. PropertyToSuluTypeGuesser::class. ' for smarter type guessing.');
             return null;
@@ -92,7 +137,7 @@ class ListPropertyInfoProvider
             $keys = array_keys($possibleTypes);
             $type = reset($keys);
             $description = reset($possibleTypes);
-            $this->io->info(sprintf('Choosing the only possible type: %s (%s)', $type, $description));
+            $this->io->info(sprintf('Choosing the only possible type: %s (%s)', $type ?: 'string', $description));
 
             return $type;
         }
@@ -104,7 +149,7 @@ class ListPropertyInfoProvider
             $keys = array_keys($possibleTypes);
             $type = reset($keys);
             $description = reset($possibleTypes);
-            $this->io->info(sprintf('Choosing the best guess: %s (%s)', $type, $description));
+            $this->io->info(sprintf('Choosing the best guess: %s (%s)', $type ?: 'string', $description));
         }
 
         return $type;

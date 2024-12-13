@@ -11,9 +11,8 @@ class ListPropertyInfo
         public Visibility $visibility,
         public bool $searchability,
         public string $translations,
-        public ?string $type = null
+        public ?string $type = null,
     ) {
-
     }
 
 

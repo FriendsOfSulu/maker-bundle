@@ -2,31 +2,23 @@
 
 namespace FriendsOfSulu\MakerBundle\Property;
 
-use DateTimeInterface;
-use ReflectionProperty;
-use ReflectionNamedType;
-
-class PropertyToSuluTypeGuesser
+class PropertyToSuluTypeGuesser implements PropertyToSuluTypeGuesserInterface
 {
-    /** @return array<string, string> */
-    public function getPossibleTypes(ReflectionProperty $property): array
+    public function getPossibleTypes(string $doctrineType): array
     {
-        /** @var ReflectionNamedType|null $propertyType */
-        $propertyType = $property->getType();
-        $typeName = $propertyType?->getName();
-        if ($typeName === 'bool') {
+        if ($doctrineType === 'bool') {
             return ['checkbox' => 'Renders a checkbox'];
         }
 
-        if ($typeName === 'string') {
+        if (in_array($doctrineType, ['text', 'string'], true)) {
             return [null => 'Renders a text field'];
         }
 
-        if (in_array($typeName, ['float', 'int'])) {
+        if (in_array($doctrineType, ['float', 'int'], true)) {
             return ['number' => 'Renders a number'];
         }
 
-        if (is_a($typeName, DateTimeInterface::class, true)) {
+        if (in_array($doctrineType, ['datetime', 'datetime_immutable'], true)) {
             return [
                 'datetime' => "Renders a datetime selector",
                 'date' => "Renders a date selector",
@@ -34,6 +26,6 @@ class PropertyToSuluTypeGuesser
             ];
         }
 
-        return [ ];
+        return [];
     }
 }

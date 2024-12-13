@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Webmozart\Assert\Assert;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 
 class MakeListConfigurationCommand extends AbstractMaker
 {
@@ -108,12 +109,16 @@ class MakeListConfigurationCommand extends AbstractMaker
         $assumeDefaults = $input->getOption(self::OPT_ASSUME_DEFAULTS);
 
         $this->propertyInfoProvider->setIo($io);
-        $properties = $this->propertyInfoProvider->provide(new ReflectionClass($className), $assumeDefaults);
+
+        $metadata = $this->doctrineHelper->getMetadata($className);
+        Assert::implementsInterface($metadata, ClassMetadata::class);
+        $infos = $this->propertyInfoProvider->provide($metadata, $assumeDefaults);
 
         $generator->generateFile($filePath, __DIR__.'/list_template.tpl.php', [
             'entityClass' => $className,
             'listKey' => $resourceKey,
-            'properties' => $properties
+            'properties' => $infos['properties'],
+            'joins' => $infos['joins'],
         ]);
         $generator->writeChanges();
 
