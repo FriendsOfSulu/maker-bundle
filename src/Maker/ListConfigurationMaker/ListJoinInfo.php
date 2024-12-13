@@ -12,5 +12,6 @@ class ListJoinInfo
         public JoinType $joinType,
         public ?string $condition = null,
         public ?ConditionType $conditionType = null,
-    ) {}
+    ) {
+    }
 }
