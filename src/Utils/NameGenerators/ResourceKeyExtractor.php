@@ -7,7 +7,7 @@ use Webmozart\Assert\Assert;
 
 class ResourceKeyExtractor implements UniqueNameGenerator
 {
-    private const string RESOURCE_KEY_CONSTANT = "RESOURCE_KEY";
+    private const RESOURCE_KEY_CONSTANT = "RESOURCE_KEY";
 
     /** @param class-string $className */
     public function getUniqueName(string $className): string
