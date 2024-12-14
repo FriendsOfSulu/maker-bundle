@@ -40,7 +40,7 @@ Here is a list of features this maker provides.
 :white_check_mark: **Generating a new page type `sulu:make:page-type`**
 > You can generate an XML file in the Sulu pages directory and an example template in the Twig directory.
 
-:question: **Generating the List XML Configruation `make:sulu:list`**
+:white_check_mark: **Generating the List XML Configruation `make:sulu:list`**
 > The basics for this are working. This can't generate a configuration for entities with join columns.
 
 :exclamation: **Generating form XML configuration `make:sulu:form`**
