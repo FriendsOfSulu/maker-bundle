@@ -5,6 +5,7 @@ use FriendsOfSulu\MakerBundle\Maker\ControllerMaker\MakeControllerCommand;
 use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\ListPropertyInfoProvider;
 use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\MakeListConfigurationCommand;
 use FriendsOfSulu\MakerBundle\Maker\SuluPageMaker\MakePageTypeCommand;
+use FriendsOfSulu\MakerBundle\Maker\TashHandlerMaker\MakeTrashHandlerCommand;
 use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesser;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ClassNameGenerator;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ResourceKeyExtractor;
@@ -50,6 +51,10 @@ return function (ContainerConfigurator $configurator) {
         ->args([
             service(PropertyToSuluTypeGuesser::class),
         ]);
+
+    $services->set(MakeTrashHandlerCommand::class)
+        ->tag('maker.command')
+    ;
 
     $services->set(PropertyToSuluTypeGuesser::class);
     $services->set(ResourceKeyExtractor::class);
