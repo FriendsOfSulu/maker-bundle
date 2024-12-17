@@ -136,6 +136,15 @@ app_${resourceKey}_api:
     prefix: /admin/api
     resource: $generatedClassName
     name_prefix: app.
+YAML,
+            'Registering the controller in the admin panel under `config/sulu_admin.yaml`:',
+            <<<YAML
+sulu_admin:
+    resources:
+        ${resourceKey}:
+            routes:
+                list: 'app.get_${resourceKey}s'
+                detail: 'app.get_${resourceKey}'
 YAML
         ]);
     }
