@@ -55,8 +55,6 @@ Here is a list of features this maker provides.
 :exclamation: **Generate all of the above `sulu:make:resource`**
 > TODO
 
-:exclamation: **Generate a Trash handler `sulu:make:trash_handler`**
-> TODO
+:white_check_mark: **Generate a Trash handler `sulu:make:trash_handler`**
+> Generates a Trash handler with the option to also implement restoring functionality for the resource.
 
-:exclamation: **Generate a Trash handler `sulu:make:resource`**
-> TODO
