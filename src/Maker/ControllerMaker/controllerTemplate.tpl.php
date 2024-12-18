@@ -34,6 +34,9 @@ class <?= $class_name ?> implements ClassResourceInterface
 <?php if ($settings->needsEntityManager()) {?>
         private EntityManagerInterface $entityManager,
 <?php } ?>
+<?php if ($settings->shouldHaveTrashing) {?>
+        private StoreTrashItemHandlerInterface $trashItemHandler,
+<?php } ?>
     ) {
     }
 <?php if ($settings->shouldHaveGetListAction) { ?>
@@ -97,6 +100,11 @@ class <?= $class_name ?> implements ClassResourceInterface
     public function deleteAction(string $id): Response
     {
         $entity = $this->entityManager->find(<?= $resourceClassName ?>::class, $id);
+
+<?php if ($settings->shouldHaveTrashing) { ?>
+        $this->trashManager->store('<?= $resourceKey ?>', $listingTile);
+<?php } ?>
+
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
 

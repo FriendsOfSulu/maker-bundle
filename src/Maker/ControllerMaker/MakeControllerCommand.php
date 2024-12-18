@@ -26,6 +26,7 @@ class MakeControllerCommand extends AbstractMaker
     public const ARG_CONTROLLER_NAMESPACE = 'controller_namespace';
     public const OPT_FORCE = 'force';
     public const ESCAPE_ROUTEKEY = 'escape_routekey';
+    public const OPT_ADD_TRASHING = 'add-trashing';
 
     public const CONTROLLER_DEPENDENCIES = [
         'FOS\RestBundle\Routing\ClassResourceInterface',
@@ -61,6 +62,7 @@ class MakeControllerCommand extends AbstractMaker
             ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
             ->addArgument(self::ARG_CONTROLLER_NAMESPACE, InputArgument::OPTIONAL, 'Namespace where the controller should be generated to', 'App\\Controller\\Admin')
             ->addOption(self::ESCAPE_ROUTEKEY, null, InputOption::VALUE_NONE, 'If your resource key contains underscores they will be removed')
+            ->addOption(self::OPT_ADD_TRASHING, null, InputOption::VALUE_NONE, 'Adding trashing functionality to the controller (see sulu:make:trash)')
         ;
     }
 
@@ -89,6 +91,7 @@ class MakeControllerCommand extends AbstractMaker
         }
 
         $settings = $this->askMethodsToBeGenerated($io);
+        $settings->shouldHaveTrashing = $input->getOption(self::OPT_ADD_TRASHING) === true;
         $useStatements = self::CONTROLLER_DEPENDENCIES;
         if ($settings->shouldHaveGetListAction) {
             $useStatements =
@@ -104,6 +107,9 @@ class MakeControllerCommand extends AbstractMaker
                 );
         }
 
+        if ($settings->shouldHaveTrashing) {
+            $useStatements[] = 'Sulu\Bundle\TrashBundle\Application\TrashItemHandler\StoreTrashItemHandlerInterface';
+        }
         if ($settings->needsEntityManager()) {
             $useStatements[] = 'Doctrine\ORM\EntityManagerInterface';
         }
