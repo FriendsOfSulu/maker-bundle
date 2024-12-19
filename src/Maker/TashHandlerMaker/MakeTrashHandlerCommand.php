@@ -85,6 +85,7 @@ class MakeTrashHandlerCommand extends AbstractMaker
             * Implement the "store" methods on that class.
             * Check the the security context (see comment in class)
             * Register the trash handler
+            * Add the trash handler to the resource controller's delete method
             EOT);
     }
 }

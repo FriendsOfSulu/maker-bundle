@@ -14,6 +14,8 @@ class ControllerGeneratorSettings
 
     public bool $shouldHaveDeleteAction = true;
 
+    public bool $shouldHaveTrashing = false;
+
     public function needsEntityManager(): bool
     {
         return $this->shouldHaveGetAction
