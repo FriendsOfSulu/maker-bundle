@@ -5,7 +5,7 @@ use Symfony\Bundle\MakerBundle\Util\UseStatementGenerator;
 
 /**
  * @var string $namespace
- * @var string $className
+ * @var string $class_name
  * @var TashHandlerGeneratorSettings $settings
  * @var UseStatementGenerator $useStatements
  */
@@ -18,7 +18,7 @@ namespace <?= $namespace; ?>;
 
 <?= $useStatements; ?>
 
-class <?= $className; ?> implements StoreTrashItemHandlerInterface
+class <?= $class_name; ?> implements StoreTrashItemHandlerInterface
 <?php if ($settings->shouldHaveRestore) { ?>, RestoreTrashItemHandlerInterface <?php } ?>
 {
     public function __construct(

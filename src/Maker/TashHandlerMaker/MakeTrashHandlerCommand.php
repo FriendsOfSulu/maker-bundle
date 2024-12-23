@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace FriendsOfSulu\MakerBundle\Maker\TashHandlerMaker;
 
+use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
+use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
@@ -18,9 +20,14 @@ use Symfony\Component\Console\Input\InputOption;
 
 class MakeTrashHandlerCommand extends AbstractMaker
 {
-    private const ARG_CLASS_NAME = 'class-name';
-    private const OPT_NAMESPACE = 'namespace';
+    use ConsoleHelperTrait;
+
+    private const ARG_RESOURCE_CLASS = 'resourceClass';
     private const OPT_NO_RESTORE = 'no-restore';
+
+    public function __construct(private DoctrineHelper $doctrineHelper)
+    {
+    }
 
     public static function getCommandName(): string
     {
@@ -29,9 +36,13 @@ class MakeTrashHandlerCommand extends AbstractMaker
 
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
-        $command->addArgument(self::ARG_CLASS_NAME, InputArgument::REQUIRED, 'The class name of the resource to trash');
-        $command->addOption(self::OPT_NAMESPACE, null, InputOption::VALUE_REQUIRED, 'Namespace to generate the class to', 'App');
+        $command->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::REQUIRED, 'The class name of the resource to trash');
         $command->addOption(self::OPT_NO_RESTORE, null, InputOption::VALUE_NONE, 'Do not add restore functionality');
+    }
+
+    public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
+    {
+        $this->interactiveEntityArgument($input, self::ARG_RESOURCE_CLASS, $this->doctrineHelper);
     }
 
     public function configureDependencies(DependencyBuilder $dependencies): void
@@ -41,11 +52,14 @@ class MakeTrashHandlerCommand extends AbstractMaker
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
     {
         /** @var string $resourceClass */
-        $resourceClass = $input->getArgument(self::ARG_CLASS_NAME);
-        /** @var string $namespace */
-        $namespace = $input->getOption(self::OPT_NAMESPACE);
+        $resourceClass = $input->getArgument(self::ARG_RESOURCE_CLASS);
 
-        $className = Str::getShortClassName($resourceClass) . 'TrashItemHandler';
+        $className = $generator->createClassNameDetails(
+            Str::getShortClassName($resourceClass),
+            namespacePrefix: 'Trash\\',
+            suffix: 'TrashItemHandler'
+        );
+
         $settings = new TashHandlerGeneratorSettings(
             Str::getShortClassName($resourceClass),
             !$input->getOption(self::OPT_NO_RESTORE),
@@ -68,18 +82,16 @@ class MakeTrashHandlerCommand extends AbstractMaker
         }
 
         $generator->generateClass(
-            $namespace . '\\' . $className,
+            $className->getFullName(),
             __DIR__ . '/trash_handler_template.tpl.php',
             [
-                'namespace' => $namespace,
                 'useStatements' => $useStatements,
-                'className' => $className,
                 'settings' => $settings,
             ],
         );
         $generator->writeChanges();
 
-        $io->success(\sprintf('The "%s" trash handler class was created successfully.', $className));
+        $io->success(\sprintf('The "%s" trash handler class was created successfully.', $className->getShortName()));
         $io->text(<<<EOT
             Next steps:
             * Implement the "store" methods on that class.
