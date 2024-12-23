@@ -59,7 +59,7 @@ class MakeControllerCommand extends AbstractMaker
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
         $command
-            ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
+            ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, \sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
             ->addArgument(self::ARG_CONTROLLER_NAMESPACE, InputArgument::OPTIONAL, 'Namespace where the controller should be generated to', 'App\\Controller\\Admin')
             ->addOption(self::ESCAPE_ROUTEKEY, null, InputOption::VALUE_NONE, 'If your resource key contains underscores they will be removed')
             ->addOption(self::OPT_ADD_TRASHING, null, InputOption::VALUE_NONE, 'Adding trashing functionality to the controller (see sulu:make:trash)')
@@ -72,30 +72,30 @@ class MakeControllerCommand extends AbstractMaker
         Assert::classExists($resourceClass);
 
         $resourceKey = $this->resourceKeyExtractor->getUniqueName($resourceClass);
-        $generatedClassName = sprintf(
+        $generatedClassName = \sprintf(
             '%s\\%sController',
             self::getStringArgument($input, self::ARG_CONTROLLER_NAMESPACE),
             $this->nameGenerator->getUniqueName($resourceClass)
         );
 
         $routeResource = $resourceKey;
-        if (str_contains($resourceKey, '_')) {
+        if (\str_contains($resourceKey, '_')) {
             if (!$input->getOption(self::ESCAPE_ROUTEKEY)) {
-                $io->warning('Your resource key "'.$resourceKey.'" contains an underscore. If this is used as a route key this will generate routes like this: "'. str_replace('_', '/', $resourceClass). '". This is normally unwanted behaviour. ');
+                $io->warning('Your resource key "' . $resourceKey . '" contains an underscore. If this is used as a route key this will generate routes like this: "' . \str_replace('_', '/', $resourceClass) . '". This is normally unwanted behaviour. ');
             }
 
             if ($input->getOption(self::ESCAPE_ROUTEKEY) || $io->confirm('Should the underscores (_) be removed?')) {
-                $routeResource = str_replace('_', '', $resourceKey);
+                $routeResource = \str_replace('_', '', $resourceKey);
                 $io->info('Removed underscore in route key');
             }
         }
 
         $settings = $this->askMethodsToBeGenerated($io);
-        $settings->shouldHaveTrashing = $input->getOption(self::OPT_ADD_TRASHING) === true;
+        $settings->shouldHaveTrashing = true === $input->getOption(self::OPT_ADD_TRASHING);
         $useStatements = self::CONTROLLER_DEPENDENCIES;
         if ($settings->shouldHaveGetListAction) {
             $useStatements =
-                array_merge(
+                \array_merge(
                     $useStatements,
                     [
                         'Sulu\Component\Rest\ListBuilder\Doctrine\DoctrineListBuilderFactoryInterface',
@@ -122,7 +122,7 @@ class MakeControllerCommand extends AbstractMaker
 
         $generator->generateClass(
             $generatedClassName,
-            __DIR__.'/controllerTemplate.tpl.php',
+            __DIR__ . '/controllerTemplate.tpl.php',
             [
                 'use_statements' => new UseStatementGenerator($useStatements),
                 'resourceKey' => $resourceKey,
@@ -137,7 +137,7 @@ class MakeControllerCommand extends AbstractMaker
         $io->info([
             'Next steps: Add the controller to the route routes in the `config/routes_admin.yaml`',
             <<<YAML
-app_${resourceKey}_api:
+app_{$resourceKey}_api:
     type: rest
     prefix: /admin/api
     resource: $generatedClassName
@@ -147,11 +147,11 @@ YAML,
             <<<YAML
 sulu_admin:
     resources:
-        ${resourceKey}:
+        {$resourceKey}:
             routes:
-                list: 'app.get_${resourceKey}s'
-                detail: 'app.get_${resourceKey}'
-YAML
+                list: 'app.get_{$resourceKey}s'
+                detail: 'app.get_{$resourceKey}'
+YAML,
         ]);
     }
 
@@ -172,6 +172,7 @@ YAML
         // Settings for the update actions
         $settings->shouldHavePostAction = $io->confirm('Should it have a postAction (create)');
         $settings->shouldHavePutAction = $io->confirm('Should it have a putAction (update action)');
+
         return $settings;
     }
 }

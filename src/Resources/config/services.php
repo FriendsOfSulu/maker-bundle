@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
-return function (ContainerConfigurator $configurator) {
+return function(ContainerConfigurator $configurator) {
     $services = $configurator->services();
 
     $services
@@ -22,7 +22,7 @@ return function (ContainerConfigurator $configurator) {
             '%kernel.project_dir%',
             service('maker.doctrine_helper'),
             service(ListPropertyInfoProvider::class),
-            service(ResourceKeyExtractor::class)
+            service(ResourceKeyExtractor::class),
         ])
         ->tag('maker.command')
     ;
@@ -62,6 +62,6 @@ return function (ContainerConfigurator $configurator) {
     $services
         ->set(ClassNameGenerator::class)
         ->args([
-            service(ResourceKeyExtractor::class)
+            service(ResourceKeyExtractor::class),
         ]);
 };

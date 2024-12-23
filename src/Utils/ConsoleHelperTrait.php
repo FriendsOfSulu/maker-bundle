@@ -2,11 +2,11 @@
 
 namespace FriendsOfSulu\MakerBundle\Utils;
 
+use BackedEnum;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Webmozart\Assert\Assert;
-use BackedEnum;
 
 trait ConsoleHelperTrait
 {
@@ -23,13 +23,14 @@ trait ConsoleHelperTrait
      *
      * @param class-string<T> $enum
      * @param ?T $default
+     *
      * @return ($default is null ? T|null : T)
      */
-    private function askEnum(ConsoleStyle $io, string $prompt, string $enum, ?BackedEnum $default): ?BackedEnum
+    private function askEnum(ConsoleStyle $io, string $prompt, string $enum, ?\BackedEnum $default): ?\BackedEnum
     {
-        Assert::implementsInterface($enum, BackedEnum::class);
+        Assert::implementsInterface($enum, \BackedEnum::class);
         $options = [];
-        if (method_exists($enum, 'descriptions')) {
+        if (\method_exists($enum, 'descriptions')) {
             $options = [$enum, 'descriptions']();
         } else {
             foreach ([$enum, 'cases']() as $option) {
@@ -40,7 +41,7 @@ trait ConsoleHelperTrait
         $question = new ChoiceQuestion($prompt, $options, $default?->value);
         /** @var null|string $valueString */
         $valueString = $io->askQuestion($question);
-        if ($valueString === null) {
+        if (null === $valueString) {
             return $default;
         }
 
@@ -50,7 +51,7 @@ trait ConsoleHelperTrait
     private static function getStringArgument(InputInterface $input, string $key): string
     {
         $result = $input->getArgument($key);
-        Assert::string($result, 'Input option: "'. $key. '" should be a string');
+        Assert::string($result, 'Input option: "' . $key . '" should be a string');
 
         return $result;
     }

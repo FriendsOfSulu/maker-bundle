@@ -20,12 +20,12 @@ class AdminGeneratorSettings
 
     /** @var array<string> */
     public array $listToolbarActions = [
-        'add', 'delete', 'export'
+        'add', 'delete', 'export',
     ];
 
     /** @var array<string> */
     public array $formToolbarActions = [
-        'save', 'delete'
+        'save', 'delete',
     ];
 
     /** @var array<string> */

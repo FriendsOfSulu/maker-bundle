@@ -12,14 +12,14 @@ echo '<?xml version="1.0" ?>';
           xmlns:xi="http://www.w3.org/2001/XInclude"
           xsi:schemaLocation="http://schemas.sulu.io/template/template http://schemas.sulu.io/template/template-1.0.xsd">
 
-    <key><?= $pageKey ?></key>
+    <key><?= $pageKey; ?></key>
 
-    <view><?= $viewPath ?></view>
-    <controller><?= $controller ?></controller>
+    <view><?= $viewPath; ?></view>
+    <controller><?= $controller; ?></controller>
     <cacheLifetime>86400</cacheLifetime>
 
     <meta>
-        <title><?= $pageName ?></title>
+        <title><?= $pageName; ?></title>
     </meta>
 
     <properties>

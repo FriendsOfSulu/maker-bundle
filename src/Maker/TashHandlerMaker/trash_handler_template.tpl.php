@@ -8,17 +8,17 @@ use Symfony\Bundle\MakerBundle\Util\UseStatementGenerator;
  * @var string $className
  * @var TashHandlerGeneratorSettings $settings
  * @var UseStatementGenerator $useStatements
-*/
+ */
 echo '<?php';
 ?>
 
 declare(strict_types=1);
 
-namespace <?= $namespace ?>;
+namespace <?= $namespace; ?>;
 
-<?= $useStatements ?>
+<?= $useStatements; ?>
 
-class <?= $className ?> implements StoreTrashItemHandlerInterface
+class <?= $className; ?> implements StoreTrashItemHandlerInterface
 <?php if ($settings->shouldHaveRestore) { ?>, RestoreTrashItemHandlerInterface <?php } ?>
 {
     public function __construct(
@@ -33,7 +33,7 @@ class <?= $className ?> implements StoreTrashItemHandlerInterface
     {
         $restoreData = [];
         $id = (string) $resourceToTrash->getId();
-        $title = 'Deleted <?= $settings->resourceClassToTrash ?> with id '. $id;
+        $title = 'Deleted <?= $settings->resourceClassToTrash; ?> with id '. $id;
 
         dd('Implement trashing logic here.');
 
@@ -44,7 +44,7 @@ class <?= $className ?> implements StoreTrashItemHandlerInterface
             restoreData: $restoreData,
             restoreType: null,
             restoreOptions: $options,
-            resourceSecurityContext: null, // This should be something like <?= $settings->resourceClassToTrash ?>Admin::SECURITY_CONTEXT,
+            resourceSecurityContext: null, // This should be something like <?= $settings->resourceClassToTrash; ?>Admin::SECURITY_CONTEXT,
             resourceSecurityObjectType: null,
             resourceSecurityObjectId: null,
         );
@@ -54,7 +54,7 @@ class <?= $className ?> implements StoreTrashItemHandlerInterface
     public function restore(TrashItemInterface $trashItem, array $restoreFormData = []): object
     {
         // Disable id generation for this entity, because we want to set the Id manually.
-        $metadata = $this->entityManager->getClassMetaData(<?= $settings->resourceClassToTrash ?>::class);
+        $metadata = $this->entityManager->getClassMetaData(<?= $settings->resourceClassToTrash; ?>::class);
         $metadata->setIdGenerator(new AssignedGenerator());
         $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
 
@@ -65,7 +65,7 @@ class <?= $className ?> implements StoreTrashItemHandlerInterface
         /**
             Example:
 
-            $resourceToRestore = new <?= $settings->resourceClassToTrash ?>();
+            $resourceToRestore = new <?= $settings->resourceClassToTrash; ?>();
             $resourceToRestore->id = $trashItem->getResourceId();
             $this->entityManager->persist($resourceToRestore);
 
@@ -76,7 +76,7 @@ class <?= $className ?> implements StoreTrashItemHandlerInterface
 
     public static function getResourceKey(): string
     {
-        return <?= $settings->resourceClassToTrash ?>::RESOURCE_KEY;
+        return <?= $settings->resourceClassToTrash; ?>::RESOURCE_KEY;
     }
 }
 

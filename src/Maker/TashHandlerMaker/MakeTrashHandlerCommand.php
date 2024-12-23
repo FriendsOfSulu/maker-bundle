@@ -45,7 +45,7 @@ class MakeTrashHandlerCommand extends AbstractMaker
         /** @var string $namespace */
         $namespace = $input->getOption(self::OPT_NAMESPACE);
 
-        $className = Str::getShortClassName($resourceClass).'TrashItemHandler';
+        $className = Str::getShortClassName($resourceClass) . 'TrashItemHandler';
         $settings = new TashHandlerGeneratorSettings(
             Str::getShortClassName($resourceClass),
             !$input->getOption(self::OPT_NO_RESTORE),
@@ -68,8 +68,8 @@ class MakeTrashHandlerCommand extends AbstractMaker
         }
 
         $generator->generateClass(
-            $namespace.'\\'.$className,
-            __DIR__.'/trash_handler_template.tpl.php',
+            $namespace . '\\' . $className,
+            __DIR__ . '/trash_handler_template.tpl.php',
             [
                 'namespace' => $namespace,
                 'useStatements' => $useStatements,
@@ -79,7 +79,7 @@ class MakeTrashHandlerCommand extends AbstractMaker
         );
         $generator->writeChanges();
 
-        $io->success(sprintf('The "%s" trash handler class was created successfully.', $className));
+        $io->success(\sprintf('The "%s" trash handler class was created successfully.', $className));
         $io->text(<<<EOT
             Next steps:
             * Implement the "store" methods on that class.

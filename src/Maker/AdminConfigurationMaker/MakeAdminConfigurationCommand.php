@@ -5,7 +5,6 @@ namespace FriendsOfSulu\MakerBundle\Maker\AdminConfigurationMaker;
 use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ResourceKeyExtractor;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\UniqueNameGenerator;
-use ReflectionClass;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Generator;
@@ -62,7 +61,7 @@ class MakeAdminConfigurationCommand extends AbstractMaker
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
         $command
-            ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
+            ->addArgument(self::ARG_RESOURCE_CLASS, InputArgument::OPTIONAL, \sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
             ->addOption(self::OPT_PERMISSIONS, null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'List of permissions that should be configurable')
             ->addOption(self::OPT_FORCE, '-f', InputOption::VALUE_NONE, 'Force the creation of a new file even if the old one is already there')
             ->addOption(self::OPT_ADVANCED, '-a', InputOption::VALUE_NONE, 'Show all the options. This only works for interactive prompts though')
@@ -75,15 +74,15 @@ class MakeAdminConfigurationCommand extends AbstractMaker
         $className = $input->getArgument(self::ARG_RESOURCE_CLASS);
         Assert::classExists($className);
         $resourceKey = $this->resourceKeyExtractor->getUniqueName($className);
-        $generatedClassName = 'App\\Admin\\'.$this->nameGenerator->getUniqueName($className).'Admin';
+        $generatedClassName = 'App\\Admin\\' . $this->nameGenerator->getUniqueName($className) . 'Admin';
 
         $useStatements = new UseStatementGenerator(
-            array_merge(
+            \array_merge(
                 self::ADMIN_DEPENDENCIES,
                 [
-                "Sulu\Component\Security\Authorization\PermissionTypes",
-                "Sulu\Component\Security\Authorization\SecurityCheckerInterface",
-            ]
+                    "Sulu\Component\Security\Authorization\PermissionTypes",
+                    "Sulu\Component\Security\Authorization\SecurityCheckerInterface",
+                ]
             )
         );
 
@@ -97,10 +96,10 @@ class MakeAdminConfigurationCommand extends AbstractMaker
             $useStatements->addUseStatement('Sulu\Bundle\ReferenceBundle\Infrastructure\Sulu\Admin\View\ReferenceViewBuilderFactoryInterface');
         }
 
-        $slug = $this->askString($io, 'Enter the API slug', '/'.$resourceKey);
-        $settings->slug = '/'.ltrim($slug, '/');
+        $slug = $this->askString($io, 'Enter the API slug', '/' . $resourceKey);
+        $settings->slug = '/' . \ltrim($slug, '/');
 
-        if (str_contains($settings->slug, '_')) {
+        if (\str_contains($settings->slug, '_')) {
             $io->warning('Your slug contains an _ this could cause problems when generating a controller for this class. It is recommended to not use underscores in the slug.');
         }
 
@@ -108,12 +107,11 @@ class MakeAdminConfigurationCommand extends AbstractMaker
         $permissionTypeClass = "Sulu\Component\Security\Authorization\PermissionTypes";
 
         /** @var array<string> $availablePermissions */
-        $availablePermissions = array_keys((new ReflectionClass($permissionTypeClass))->getConstants());
+        $availablePermissions = \array_keys((new \ReflectionClass($permissionTypeClass))->getConstants());
 
         /** @var array<string> $currentOptionvalue */
         $currentOptionvalue = $input->getOption(self::OPT_PERMISSIONS);
         if ($input->isInteractive() && !$currentOptionvalue) {
-
             // Get available PermissionTypes from Sulu class
             $choiceQuestion = new ChoiceQuestion(
                 'Which permissions should be configurable in the admin panel? (Multiple selections are allowed: comma separated)',
@@ -139,7 +137,7 @@ class MakeAdminConfigurationCommand extends AbstractMaker
 
         $generator->generateClass(
             $generatedClassName,
-            __DIR__.'/configurationTemplate.tpl.php',
+            __DIR__ . '/configurationTemplate.tpl.php',
             [
                 'use_statements' => $useStatements,
                 'resourceKey' => $resourceKey,

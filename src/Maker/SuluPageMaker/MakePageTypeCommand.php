@@ -52,17 +52,17 @@ class MakePageTypeCommand extends AbstractMaker
     {
         /** @var string $pageKey */
         $pageKey = $input->getArgument(self::ARG_PAGE_KEY);
-        $viewPath = $input->getOption(self::OPT_VIEW) ?? 'page/'.$pageKey;
-        $configPath = $this->projectDirectory.'/config/templates/pages/'.$pageKey.'.xml';
+        $viewPath = $input->getOption(self::OPT_VIEW) ?? 'page/' . $pageKey;
+        $configPath = $this->projectDirectory . '/config/templates/pages/' . $pageKey . '.xml';
 
-        if (file_exists($configPath) && !$io->confirm("Config path '$configPath' already exists. Overwrite it?")) {
+        if (\file_exists($configPath) && !$io->confirm("Config path '$configPath' already exists. Overwrite it?")) {
             return;
         }
 
         // Generate the config
         $generator->generateFile(
             $configPath,
-            __DIR__.'/page_config.tpl.php',
+            __DIR__ . '/page_config.tpl.php',
             [
                 'pageKey' => $input->getArgument(self::ARG_PAGE_KEY),
                 'viewPath' => $viewPath,
@@ -73,8 +73,8 @@ class MakePageTypeCommand extends AbstractMaker
 
         // Generate an example template
         $generator->generateTemplate(
-            $viewPath.'.html.twig',
-            __DIR__.'/page_template.tpl.php',
+            $viewPath . '.html.twig',
+            __DIR__ . '/page_template.tpl.php',
             ['configPath' => $configPath],
         );
 

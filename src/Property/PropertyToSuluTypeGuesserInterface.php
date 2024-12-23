@@ -7,7 +7,7 @@ namespace FriendsOfSulu\MakerBundle\Property;
 interface PropertyToSuluTypeGuesserInterface
 {
     /**
-     * Returns the types based on the doctrine field type
+     * Returns the types based on the doctrine field type.
      *
      * @return array<null|string, string>
      */

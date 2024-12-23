@@ -1,14 +1,14 @@
 <?php
 /**
-* @var FriendsOfSulu\MakerBundle\Maker\ControllerMaker\ControllerGeneratorSettings $settings
-* @var string $resourceKey
-* @var string $resourceClass
-* @var string $namespace
-* @var string $class_name
-* @var string $use_statements
+ * @var FriendsOfSulu\MakerBundle\Maker\ControllerMaker\ControllerGeneratorSettings $settings
+ * @var string $resourceKey
+ * @var string $resourceClass
+ * @var string $namespace
+ * @var string $class_name
+ * @var string $use_statements
  */
-$a = explode('\\', $resourceClass);
-$resourceClassName = end($a);
+$a = \explode('\\', $resourceClass);
+$resourceClassName = \end($a);
 
 echo "<?php\n";
 ?>
@@ -19,9 +19,9 @@ use <?= $resourceClass; ?>;
 <?= $use_statements; ?>
 
 /**
- * @RouteResource("<?= $resourceKey ?>")
+ * @RouteResource("<?= $resourceKey; ?>")
  */
-class <?= $class_name ?> implements ClassResourceInterface
+class <?= $class_name; ?> implements ClassResourceInterface
 {
 
     public function __construct(
@@ -43,13 +43,13 @@ class <?= $class_name ?> implements ClassResourceInterface
 
     public function cgetAction(): Response
     {
-        $fieldDescriptors = $this->fieldDescriptorFactory->getFieldDescriptors(<?= $resourceClassName ?>::RESOURCE_KEY);
-        $listBuilder = $this->listBuilderFactory->create(<?= $resourceClassName ?>::class);
+        $fieldDescriptors = $this->fieldDescriptorFactory->getFieldDescriptors(<?= $resourceClassName; ?>::RESOURCE_KEY);
+        $listBuilder = $this->listBuilderFactory->create(<?= $resourceClassName; ?>::class);
         $this->restHelper->initializeListBuilder($listBuilder, $fieldDescriptors);
 
         $listRepresentation = new PaginatedRepresentation(
             $listBuilder->execute(),
-            <?= $resourceClassName ?>::RESOURCE_KEY,
+            <?= $resourceClassName; ?>::RESOURCE_KEY,
             $listBuilder->getCurrentPage(),
             $listBuilder->getLimit(),
             $listBuilder->count()
@@ -62,7 +62,7 @@ class <?= $class_name ?> implements ClassResourceInterface
 
     public function getAction(string $id): Response
     {
-        $entity = $this->entityManager->find(<?= $resourceClassName ?>::class, $id);
+        $entity = $this->entityManager->find(<?= $resourceClassName; ?>::class, $id);
         if ($entity === null) {
             return new Response('', Response::HTTP_NOT_FOUND);
         }
@@ -74,7 +74,7 @@ class <?= $class_name ?> implements ClassResourceInterface
 
     public function postAction(Request $request): Response
     {
-        $productFilterConfiguration = new <?= $resourceClassName ?>();
+        $productFilterConfiguration = new <?= $resourceClassName; ?>();
         $this->mapDataFromRequest($request, $productFilterConfiguration);
 
         $this->entityManager->persist($productFilterConfiguration);
@@ -87,7 +87,7 @@ class <?= $class_name ?> implements ClassResourceInterface
 
     public function putAction(string $id, Request $request): Response
     {
-        $productConfiguration = $this->entityManager->find(<?= $resourceClassName ?>::class, $id);
+        $productConfiguration = $this->entityManager->find(<?= $resourceClassName; ?>::class, $id);
         $this->mapDataFromRequest($request, $productConfiguration);
 
         $this->entityManager->flush();
@@ -99,10 +99,10 @@ class <?= $class_name ?> implements ClassResourceInterface
 
     public function deleteAction(string $id): Response
     {
-        $entity = $this->entityManager->find(<?= $resourceClassName ?>::class, $id);
+        $entity = $this->entityManager->find(<?= $resourceClassName; ?>::class, $id);
 
 <?php if ($settings->shouldHaveTrashing) { ?>
-        $this->trashManager->store('<?= $resourceKey ?>', $listingTile);
+        $this->trashManager->store('<?= $resourceKey; ?>', $listingTile);
 <?php } ?>
 
         $this->entityManager->remove($entity);
@@ -113,14 +113,14 @@ class <?= $class_name ?> implements ClassResourceInterface
 <?php } ?>
 <?php if ($settings->shouldHavePostAction || $settings->shouldHavePutAction) { ?>
 
-    public function mapDataFromRequest(Request $request, <?= $resourceClassName ?> $entity): void
+    public function mapDataFromRequest(Request $request, <?= $resourceClassName; ?> $entity): void
     {
-        throw new \BadMethodCallException('There was no mapping function defined that can map a request to a <?= $resourceClass ?> object. Implement '. self::class. '::mapDataFromRequest to remove the error');
+        throw new \BadMethodCallException('There was no mapping function defined that can map a request to a <?= $resourceClass; ?> object. Implement '. self::class. '::mapDataFromRequest to remove the error');
     }
 <?php } ?>
 
     public function getSecurityContext(): string
     {
-        return 'sulu.app.<?= $resourceKey ?>';
+        return 'sulu.app.<?= $resourceKey; ?>';
     }
 }

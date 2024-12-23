@@ -4,7 +4,7 @@
 /** @var string $namespace */
 /** @var string $class_name */
 /** @var string $use_statements */
-$translationKey = 'app.'.$resourceKey;
+$translationKey = 'app.' . $resourceKey;
 $slug = $settings->slug;
 
 echo "<?php\n";
@@ -14,7 +14,7 @@ namespace <?= $namespace; ?>;
 
 <?= $use_statements; ?>
 
-class <?= $class_name ?> extends Admin
+class <?= $class_name; ?> extends Admin
 {
     public const SECURITY_CONTEXT = '<?= $translationKey; ?>';
 
@@ -43,7 +43,7 @@ class <?= $class_name ?> extends Admin
             return;
         }
 
-        $menuItem = new NavigationItem('app.menu.<?= $resourceKey ?>');
+        $menuItem = new NavigationItem('app.menu.<?= $resourceKey; ?>');
         $menuItem->setView(static::LIST_VIEW);
 
         $navigationItemCollection->get(Admin::SETTINGS_NAVIGATION_ITEM)->addChild($menuItem);
@@ -58,21 +58,21 @@ class <?= $class_name ?> extends Admin
 
         $formToolbarActions = [
 <?php foreach ($settings->formToolbarActions as $actionName) { ?>
-            new ToolbarAction('sulu_admin.<?= $actionName ?>'),
+            new ToolbarAction('sulu_admin.<?= $actionName; ?>'),
 <?php } ?>
         ];
         $listToolbarActions = [
 <?php foreach ($settings->listToolbarActions as $actionName) { ?>
-            new ToolbarAction('sulu_admin.<?= $actionName ?>'),
+            new ToolbarAction('sulu_admin.<?= $actionName; ?>'),
 <?php } ?>
         ];
 
         // View that displays the table of all entities
         $viewCollection->add(
-            $this->viewBuilderFactory->createListViewBuilder(static::LIST_VIEW, '<?= $slug ?>')
-                ->setResourceKey(<?= $resourceKey ?>)
-                ->setListKey('<?= $settings->listKey ?>')
-                ->setTitle('<?= $translationKey ?>')
+            $this->viewBuilderFactory->createListViewBuilder(static::LIST_VIEW, '<?= $slug; ?>')
+                ->setResourceKey(<?= $resourceKey; ?>)
+                ->setListKey('<?= $settings->listKey; ?>')
+                ->setTitle('<?= $translationKey; ?>')
                 ->addListAdapters(['table'])
                 ->setAddView(static::ADD_FORM_VIEW)
 <?php if ($settings->shouldHaveEditForm) { ?>
@@ -84,14 +84,14 @@ class <?= $class_name ?> extends Admin
 <?php if ($settings->shouldHaveAddForm) { ?>
         // Add form for the resource
         $viewCollection->add(
-            $this->viewBuilderFactory->createResourceTabViewBuilder(static::ADD_FORM_VIEW, '<?= $slug ?>/add')
-                ->setResourceKey(<?= $resourceKey ?>)
+            $this->viewBuilderFactory->createResourceTabViewBuilder(static::ADD_FORM_VIEW, '<?= $slug; ?>/add')
+                ->setResourceKey(<?= $resourceKey; ?>)
                 ->setBackView(static::LIST_VIEW)
         );
         $viewCollection->add(
             $this->viewBuilderFactory->createFormViewBuilder(self::ADD_FORM_VIEW.'.details', '/details')
-                ->setResourceKey('<?= $resourceKey ?>')
-                ->setFormKey('<?= $settings->formKey ?>')
+                ->setResourceKey('<?= $resourceKey; ?>')
+                ->setFormKey('<?= $settings->formKey; ?>')
                 ->setTabTitle('sulu_admin.details')
 <?php if ($settings->shouldHaveEditForm) { ?>
                 ->setEditView(static::EDIT_FORM_VIEW)
@@ -104,15 +104,15 @@ class <?= $class_name ?> extends Admin
 <?php if ($settings->shouldHaveEditForm) { ?>
         // Edit form view
         $viewCollection->add(
-            $this->viewBuilderFactory->createResourceTabViewBuilder(static::EDIT_FORM_VIEW, '<?= $slug ?>/:id')
-                ->setResourceKey('<?= $resourceKey ?>')
+            $this->viewBuilderFactory->createResourceTabViewBuilder(static::EDIT_FORM_VIEW, '<?= $slug; ?>/:id')
+                ->setResourceKey('<?= $resourceKey; ?>')
                 ->setBackView(static::LIST_VIEW)
                 ->setTitleProperty('name')
         );
         $viewCollection->add(
             $this->viewBuilderFactory->createFormViewBuilder(self::EDIT_FORM_VIEW.'.details', '/details')
-                ->setResourceKey('<?= $resourceKey ?>')
-                ->setFormKey('<?= $settings->formKey ?>')
+                ->setResourceKey('<?= $resourceKey; ?>')
+                ->setFormKey('<?= $settings->formKey; ?>')
                 ->setTabTitle('sulu_admin.details')
                 ->addToolbarActions($formToolbarActions)
                 ->setParent(static::EDIT_FORM_VIEW)
@@ -153,7 +153,7 @@ class <?= $class_name ?> extends Admin
                 'Settings' => [
                     static::SECURITY_CONTEXT => [
 <?php foreach ($settings->permissionTypes as $permissionType) { ?>
-                        PermissionTypes::<?= $permissionType ?>,
+                        PermissionTypes::<?= $permissionType; ?>,
 <?php } ?>
                     ],
                 ],

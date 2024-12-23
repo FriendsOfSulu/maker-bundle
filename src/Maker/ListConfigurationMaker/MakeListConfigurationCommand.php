@@ -2,8 +2,8 @@
 
 namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\UniqueNameGenerator;
-use ReflectionClass;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
@@ -19,7 +19,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Webmozart\Assert\Assert;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 
 class MakeListConfigurationCommand extends AbstractMaker
 {
@@ -52,13 +51,13 @@ class MakeListConfigurationCommand extends AbstractMaker
             ->addArgument(
                 self::ARG_RESOURCE_CLASS,
                 InputArgument::OPTIONAL,
-                sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())),
+                \sprintf('Class that you want to generate the list view for (eg. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())),
             )
             ->addArgument(
                 self::ARG_LIST_DIRECTORY,
                 InputArgument::OPTIONAL,
                 'Directory for list configurations',
-                $this->projectDirectory.'/config/lists',
+                $this->projectDirectory . '/config/lists',
             )
             ->addOption(
                 self::OPT_ASSUME_DEFAULTS,
@@ -72,11 +71,11 @@ class MakeListConfigurationCommand extends AbstractMaker
 
     public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
     {
-        $entityQuestion = new Question("What entity do you want to generate the list view for");
+        $entityQuestion = new Question('What entity do you want to generate the list view for');
         $entityQuestion->setValidator(Validator::notBlank(...));
         $entityQuestion->setAutocompleterValues($this->doctrineHelper->getEntitiesForAutocomplete());
 
-        $className = $this->doctrineHelper->getEntityNamespace().'\\'.$io->askQuestion($entityQuestion);
+        $className = $this->doctrineHelper->getEntityNamespace() . '\\' . $io->askQuestion($entityQuestion);
         $input->setArgument(self::ARG_RESOURCE_CLASS, $className);
     }
 
@@ -84,7 +83,7 @@ class MakeListConfigurationCommand extends AbstractMaker
     {
         /** @var string $configDirectory */
         $configDirectory = $input->getArgument(self::ARG_LIST_DIRECTORY);
-        if (!file_exists($configDirectory)) {
+        if (!\file_exists($configDirectory)) {
             throw new FileNotFoundException('Could not find config directory: ' . $configDirectory);
         }
 
@@ -95,15 +94,15 @@ class MakeListConfigurationCommand extends AbstractMaker
         Assert::classExists($className, 'Class does not exist. Please provide an existing entity');
 
         $resourceKey = $this->nameGenerator->getUniqueName($className);
-        $filePath = $configDirectory.'/'.$resourceKey.'.xml';
-        if (file_exists($filePath)) {
+        $filePath = $configDirectory . '/' . $resourceKey . '.xml';
+        if (\file_exists($filePath)) {
             if (!$io->confirm("The list configuration under '$filePath' already exists. Do you want to overwrite it?")) {
                 return;
             }
-            unlink($filePath);
+            \unlink($filePath);
         }
 
-        $io->writeln('Generating list configuration for '. $className);
+        $io->writeln('Generating list configuration for ' . $className);
 
         /** @var bool $assumeDefaults */
         $assumeDefaults = $input->getOption(self::OPT_ASSUME_DEFAULTS);
@@ -114,7 +113,7 @@ class MakeListConfigurationCommand extends AbstractMaker
         Assert::implementsInterface($metadata, ClassMetadata::class);
         $infos = $this->propertyInfoProvider->provide($metadata, $assumeDefaults);
 
-        $generator->generateFile($filePath, __DIR__.'/list_template.tpl.php', [
+        $generator->generateFile($filePath, __DIR__ . '/list_template.tpl.php', [
             'entityClass' => $className,
             'listKey' => $resourceKey,
             'properties' => $infos['properties'],

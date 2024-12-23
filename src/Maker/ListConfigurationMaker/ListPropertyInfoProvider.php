@@ -2,13 +2,13 @@
 
 namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use FriendsOfSulu\MakerBundle\Enums\Visibility;
 use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesser;
 use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesserInterface;
 use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Webmozart\Assert\Assert;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 
 class ListPropertyInfoProvider
 {
@@ -17,7 +17,6 @@ class ListPropertyInfoProvider
     public function __construct(
         private /* readonly */ PropertyToSuluTypeGuesserInterface $typeGuesser
     ) {
-
     }
 
     private ?ConsoleStyle $io = null;
@@ -55,16 +54,17 @@ class ListPropertyInfoProvider
      */
     protected function provideProperty(string $name, array $mapping, bool $assumeDefaults): ?ListPropertyInfo
     {
-        Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
+        Assert::notNull($this->io, 'No io set. Please call ' . self::class . '::setIo() before');
 
         // If it's a primary identifier (like id) we don't want to show that.
         if ($mapping['id'] ?? false) {
-            return new ListPropertyInfo($name, Visibility::NO, false, 'sulu_admin.'.$name);
+            return new ListPropertyInfo($name, Visibility::NO, false, 'sulu_admin.' . $name);
         }
 
-        $this->io->info(sprintf('Configuring property: "%s"', $name));
-        if (!$assumeDefaults && !$this->io->confirm(sprintf('Should this property "%s" be configured', $name))) {
-            $this->io->info(sprintf('Property "%s" skipped', $name));
+        $this->io->info(\sprintf('Configuring property: "%s"', $name));
+        if (!$assumeDefaults && !$this->io->confirm(\sprintf('Should this property "%s" be configured', $name))) {
+            $this->io->info(\sprintf('Property "%s" skipped', $name));
+
             return null;
         }
 
@@ -79,9 +79,9 @@ class ListPropertyInfoProvider
         $type = $this->getType($mapping['type'] ?? 'string');
 
         if ($assumeDefaults) {
-            $translation = 'sulu_admin.'.$name;
+            $translation = 'sulu_admin.' . $name;
         } else {
-            $translation = $this->askString($this->io, 'Translation', 'sulu_admin.'.$name);
+            $translation = $this->askString($this->io, 'Translation', 'sulu_admin.' . $name);
         }
 
         return new ListPropertyInfo($name, $visibility, $searchable, $translation, $type);
@@ -89,14 +89,15 @@ class ListPropertyInfoProvider
 
     /**
      * @param array{fieldName: string, sourceEntity: string} $mapping
-    */
+     */
     protected function provideJoin(array $mapping, bool $assumeDefaults): ?ListJoinInfo
     {
-        Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
+        Assert::notNull($this->io, 'No io set. Please call ' . self::class . '::setIo() before');
 
         $name = $mapping['fieldName'];
-        if (!$this->io->confirm(sprintf('Should this association "%s" be configured', $name))) {
-            $this->io->info(sprintf('Association "%s" skipped', $name));
+        if (!$this->io->confirm(\sprintf('Should this association "%s" be configured', $name))) {
+            $this->io->info(\sprintf('Association "%s" skipped', $name));
+
             return null;
         }
 
@@ -107,7 +108,7 @@ class ListPropertyInfoProvider
         }
 
         $condition = $this->askString($this->io, 'Additional condition (leave empty for none)', '');
-        if ($condition === '') {
+        if ('' === $condition) {
             $condition = null;
             $conditionType = null;
         } else {
@@ -116,7 +117,7 @@ class ListPropertyInfoProvider
 
         return new ListJoinInfo(
             $name,
-            $mapping['sourceEntity'].'.'.$name,
+            $mapping['sourceEntity'] . '.' . $name,
             $joinType,
             $condition,
             $conditionType,
@@ -125,19 +126,20 @@ class ListPropertyInfoProvider
 
     private function getType(string $doctrineType): ?string
     {
-        Assert::notNull($this->io, 'No io set. Please call '.self::class.'::setIo() before');
+        Assert::notNull($this->io, 'No io set. Please call ' . self::class . '::setIo() before');
 
         $possibleTypes = $this->typeGuesser->getPossibleTypes($doctrineType);
-        if ($possibleTypes === []) {
-            $this->io->note('Could not find any suggestions for the PHP Type of the property. You can extend the class '. PropertyToSuluTypeGuesser::class. ' for smarter type guessing.');
+        if ([] === $possibleTypes) {
+            $this->io->note('Could not find any suggestions for the PHP Type of the property. You can extend the class ' . PropertyToSuluTypeGuesser::class . ' for smarter type guessing.');
+
             return null;
         }
 
-        if (count($possibleTypes) === 1) {
-            $keys = array_keys($possibleTypes);
-            $type = reset($keys);
-            $description = reset($possibleTypes);
-            $this->io->info(sprintf('Choosing the only possible type: %s (%s)', $type ?: 'string', $description));
+        if (1 === \count($possibleTypes)) {
+            $keys = \array_keys($possibleTypes);
+            $type = \reset($keys);
+            $description = \reset($possibleTypes);
+            $this->io->info(\sprintf('Choosing the only possible type: %s (%s)', $type ?: 'string', $description));
 
             return $type;
         }
@@ -145,14 +147,13 @@ class ListPropertyInfoProvider
         /** @var string|null $type */
         $type = $this->io->choice('Sulu display type', $possibleTypes);
 
-        if ($type === null) {
-            $keys = array_keys($possibleTypes);
-            $type = reset($keys);
-            $description = reset($possibleTypes);
-            $this->io->info(sprintf('Choosing the best guess: %s (%s)', $type ?: 'string', $description));
+        if (null === $type) {
+            $keys = \array_keys($possibleTypes);
+            $type = \reset($keys);
+            $description = \reset($possibleTypes);
+            $this->io->info(\sprintf('Choosing the best guess: %s (%s)', $type ?: 'string', $description));
         }
 
         return $type;
     }
-
 }

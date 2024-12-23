@@ -2,17 +2,16 @@
 
 namespace FriendsOfSulu\MakerBundle\Utils\NameGenerators;
 
-use ReflectionClass;
 use Webmozart\Assert\Assert;
 
 class ResourceKeyExtractor implements UniqueNameGenerator
 {
-    private const RESOURCE_KEY_CONSTANT = "RESOURCE_KEY";
+    private const RESOURCE_KEY_CONSTANT = 'RESOURCE_KEY';
 
     /** @param class-string $className */
     public function getUniqueName(string $className): string
     {
-        $reflection = new ReflectionClass($className);
+        $reflection = new \ReflectionClass($className);
 
         $resourceKey = null;
         if ($reflection->hasConstant(self::RESOURCE_KEY_CONSTANT)) {
@@ -25,11 +24,11 @@ class ResourceKeyExtractor implements UniqueNameGenerator
 
         Assert::notNull(
             $resourceKey,
-            'Could not find resource key. It has to be a constant or a property on the class: '.$className,
+            'Could not find resource key. It has to be a constant or a property on the class: ' . $className,
         );
         Assert::string(
             $resourceKey,
-            'Resource key must be a "string" but got "'. get_debug_type($resourceKey). '" given',
+            'Resource key must be a "string" but got "' . \get_debug_type($resourceKey) . '" given',
         );
 
         return $resourceKey;

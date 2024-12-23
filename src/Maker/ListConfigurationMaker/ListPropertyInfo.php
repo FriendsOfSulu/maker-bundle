@@ -14,6 +14,4 @@ class ListPropertyInfo
         public ?string $type = null,
     ) {
     }
-
-
 }

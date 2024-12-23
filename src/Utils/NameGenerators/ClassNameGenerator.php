@@ -12,6 +12,7 @@ class ClassNameGenerator implements UniqueNameGenerator
     public function getUniqueName(string $className): string
     {
         $originalClassName = $this->nameGenerator->getUniqueName($className);
-        return ucfirst(str_replace('_', '', $originalClassName));
+
+        return \ucfirst(\str_replace('_', '', $originalClassName));
     }
 }

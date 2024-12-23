@@ -6,23 +6,23 @@ class PropertyToSuluTypeGuesser implements PropertyToSuluTypeGuesserInterface
 {
     public function getPossibleTypes(string $doctrineType): array
     {
-        if ($doctrineType === 'bool') {
+        if ('bool' === $doctrineType) {
             return ['checkbox' => 'Renders a checkbox'];
         }
 
-        if (in_array($doctrineType, ['text', 'string'], true)) {
+        if (\in_array($doctrineType, ['text', 'string'], true)) {
             return [null => 'Renders a text field'];
         }
 
-        if (in_array($doctrineType, ['float', 'int'], true)) {
+        if (\in_array($doctrineType, ['float', 'int'], true)) {
             return ['number' => 'Renders a number'];
         }
 
-        if (in_array($doctrineType, ['datetime', 'datetime_immutable'], true)) {
+        if (\in_array($doctrineType, ['datetime', 'datetime_immutable'], true)) {
             return [
-                'datetime' => "Renders a datetime selector",
-                'date' => "Renders a date selector",
-                'time' => "Renders a time selector",
+                'datetime' => 'Renders a datetime selector',
+                'date' => 'Renders a date selector',
+                'time' => 'Renders a time selector',
             ];
         }
 
