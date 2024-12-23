@@ -4,8 +4,13 @@ namespace FriendsOfSulu\MakerBundle\Utils;
 
 use BackedEnum;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
+use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
+use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Webmozart\Assert\Assert;
 
 trait ConsoleHelperTrait
@@ -54,5 +59,20 @@ trait ConsoleHelperTrait
         Assert::string($result, 'Input option: "' . $key . '" should be a string');
 
         return $result;
+    }
+
+    private static function interactiveEntityArgument(InputInterface $input, string $argumentName, DoctrineHelper $doctrineHelper): void
+    {
+        if ($input->getArgument($argumentName)) {
+            return;
+        }
+
+        $entityQuestion = new Question('What entity do you want to generate the admin view for');
+        $entityQuestion->setValidator(Validator::notBlank(...));
+        $entityQuestion->setAutocompleterValues($doctrineHelper->getEntitiesForAutocomplete());
+        $io = new SymfonyStyle($input, new ConsoleOutput());
+
+        $className = $doctrineHelper->getEntityNamespace() . '\\' . $io->askQuestion($entityQuestion);
+        $input->setArgument($argumentName, $className);
     }
 }
