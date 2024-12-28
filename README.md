@@ -1,7 +1,6 @@
 # Sulu Maker Bundle
 
-This package adds code generators for Sulu configurations and other features of Sulu to get you started quicker.
-
+This package adds code generators for Sulu configurations and other features of Sulu to get you started quicker. This bundle is based on the [Symfony maker bundle](https://symfony.com/bundles/SymfonyMakerBundle/current/index.html)
 ## How to install
 Installing it with composer is very easy:
 ```bash
