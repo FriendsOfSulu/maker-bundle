@@ -4,6 +4,7 @@ use FriendsOfSulu\MakerBundle\Maker\AdminConfigurationMaker\MakeAdminConfigurati
 use FriendsOfSulu\MakerBundle\Maker\ControllerMaker\MakeControllerCommand;
 use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\ListPropertyInfoProvider;
 use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\MakeListConfigurationCommand;
+use FriendsOfSulu\MakerBundle\Maker\PreviewMaker\MakePreviewCommand;
 use FriendsOfSulu\MakerBundle\Maker\SuluPageMaker\MakePageTypeCommand;
 use FriendsOfSulu\MakerBundle\Maker\TashHandlerMaker\MakeTrashHandlerCommand;
 use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesser;
@@ -16,6 +17,7 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 return function(ContainerConfigurator $configurator) {
     $services = $configurator->services();
 
+    // Maker commands
     $services
         ->set(MakeListConfigurationCommand::class)
         ->args([
@@ -47,14 +49,20 @@ return function(ContainerConfigurator $configurator) {
         ->tag('maker.command')
     ;
 
+    $services->set(MakeTrashHandlerCommand::class)
+        ->tag('maker.command')
+    ;
+
+    $services->set(MakePreviewCommand::class)
+        ->args([service(ResourceKeyExtractor::class)])
+        ->tag('maker.command')
+    ;
+
+    // Other services
     $services->set(ListPropertyInfoProvider::class)
         ->args([
             service(PropertyToSuluTypeGuesser::class),
         ]);
-
-    $services->set(MakeTrashHandlerCommand::class)
-        ->tag('maker.command')
-    ;
 
     $services->set(PropertyToSuluTypeGuesser::class);
     $services->set(ResourceKeyExtractor::class);
