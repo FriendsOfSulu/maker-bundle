@@ -39,7 +39,7 @@ class MakePageTypeCommand extends AbstractMaker
             null,
             InputOption::VALUE_OPTIONAL,
             'Service name of the controller that should be called',
-            'app.controller.sulu.default_action',
+            'Sulu\Bundle\WebsiteBundle\Controller\DefaultController::indexAction',
         );
         $command->addOption(self::OPT_VIEW, null, InputOption::VALUE_OPTIONAL, 'Path where the template should be located');
     }
