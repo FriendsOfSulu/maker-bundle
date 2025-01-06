@@ -57,3 +57,6 @@ Here is a list of features this maker provides.
 :white_check_mark: **Generate a Trash handler `sulu:make:trash_handler`**
 > Generates a Trash handler with the option to also implement restoring functionality for the resource.
 
+:white_check_mark: **Generate a Sulu fixture `sulu:make:fixture`**
+> Generates an example fixture to create a Sulu document
+
