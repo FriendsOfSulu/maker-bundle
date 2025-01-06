@@ -19,7 +19,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Webmozart\Assert\Assert;
 
-class MakePreviewCommand extends AbstractMaker
+/** @internal */
+final class MakePreviewCommand extends AbstractMaker
 {
     use ConsoleHelperTrait;
 

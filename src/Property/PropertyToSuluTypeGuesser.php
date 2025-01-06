@@ -2,7 +2,7 @@
 
 namespace FriendsOfSulu\MakerBundle\Property;
 
-class PropertyToSuluTypeGuesser implements PropertyToSuluTypeGuesserInterface
+final class PropertyToSuluTypeGuesser implements PropertyToSuluTypeGuesserInterface
 {
     public function getPossibleTypes(string $doctrineType): array
     {

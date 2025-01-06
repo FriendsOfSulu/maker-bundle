@@ -4,7 +4,7 @@ namespace FriendsOfSulu\MakerBundle\Utils\NameGenerators;
 
 use Webmozart\Assert\Assert;
 
-class ResourceKeyExtractor implements UniqueNameGenerator
+final class ResourceKeyExtractor implements UniqueNameGenerator
 {
     private const RESOURCE_KEY_CONSTANT = 'RESOURCE_KEY';
 

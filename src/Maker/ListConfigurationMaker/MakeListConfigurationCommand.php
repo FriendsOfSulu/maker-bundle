@@ -19,7 +19,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Webmozart\Assert\Assert;
 
-class MakeListConfigurationCommand extends AbstractMaker
+/** @internal */
+final class MakeListConfigurationCommand extends AbstractMaker
 {
     use ConsoleHelperTrait;
 

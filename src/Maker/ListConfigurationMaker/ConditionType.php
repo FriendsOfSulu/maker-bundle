@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
+/** @internal */
 enum ConditionType: string
 {
     case ON = 'ON';

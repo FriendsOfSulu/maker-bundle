@@ -18,7 +18,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class MakeAdminConfigurationCommand extends AbstractMaker
+/** @internal */
+final class MakeAdminConfigurationCommand extends AbstractMaker
 {
     use ConsoleHelperTrait;
 

@@ -2,6 +2,7 @@
 
 namespace FriendsOfSulu\MakerBundle\Maker\AdminConfigurationMaker;
 
+/** @internal */
 class AdminGeneratorSettings
 {
     public bool $shouldAddMenuItem = true;
