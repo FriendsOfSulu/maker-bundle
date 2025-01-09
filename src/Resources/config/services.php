@@ -2,6 +2,7 @@
 
 use FriendsOfSulu\MakerBundle\Maker\AdminConfigurationMaker\MakeAdminConfigurationCommand;
 use FriendsOfSulu\MakerBundle\Maker\ControllerMaker\MakeControllerCommand;
+use FriendsOfSulu\MakerBundle\Maker\DocumentFixtureMaker\MakeDocumentFixtureCommand;
 use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\ListPropertyInfoProvider;
 use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\MakeListConfigurationCommand;
 use FriendsOfSulu\MakerBundle\Maker\PreviewMaker\MakePreviewCommand;
@@ -46,6 +47,11 @@ return function(ContainerConfigurator $configurator) {
     $services
         ->set(MakeControllerCommand::class)
         ->args([service(ResourceKeyExtractor::class), service(ClassNameGenerator::class)])
+        ->tag('maker.command')
+    ;
+
+    $services
+        ->set(MakeDocumentFixtureCommand::class)
         ->tag('maker.command')
     ;
 
