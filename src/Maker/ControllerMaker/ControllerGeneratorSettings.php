@@ -2,6 +2,7 @@
 
 namespace FriendsOfSulu\MakerBundle\Maker\ControllerMaker;
 
+/** @internal */
 class ControllerGeneratorSettings
 {
     public bool $shouldHaveGetListAction = true;

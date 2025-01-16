@@ -2,9 +2,10 @@
 
 namespace FriendsOfSulu\MakerBundle\Maker\AdminConfigurationMaker;
 
+/** @internal */
 class AdminGeneratorSettings
 {
-    public bool $shouldAddMenuItem = false;
+    public bool $shouldAddMenuItem = true;
 
     public bool $shouldHaveEditForm = true;
 
@@ -17,6 +18,14 @@ class AdminGeneratorSettings
     public string $formKey;
 
     public string $listKey;
+
+    public function __construct(
+        public string $resourceKey
+    ) {
+        $this->slug = '/' . $resourceKey;
+        $this->formKey = $resourceKey;
+        $this->listKey = $resourceKey;
+    }
 
     /** @var array<string> */
     public array $listToolbarActions = [

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
+/** @internal */
 class ListJoinInfo
 {
     public function __construct(

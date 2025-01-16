@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace FriendsOfSulu\MakerBundle\Maker\PreviewMaker;
 
+use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ResourceKeyExtractor;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
+use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
@@ -17,12 +19,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Webmozart\Assert\Assert;
 
-class MakePreviewCommand extends AbstractMaker
+/** @internal */
+final class MakePreviewCommand extends AbstractMaker
 {
-    private const ARG_RESOURCE_CLASS = 'resource-class';
+    use ConsoleHelperTrait;
+
+    private const ARG_RESOURCE_CLASS = 'resourceClass';
 
     public function __construct(
         private ResourceKeyExtractor $resourceKeyExtractor,
+        private DoctrineHelper $doctrineHelper,
     ) {
     }
 
@@ -36,8 +42,9 @@ class MakePreviewCommand extends AbstractMaker
         $command->addArgument(self::ARG_RESOURCE_CLASS, InputOption::VALUE_REQUIRED, 'The resource class to be previewed');
     }
 
-    public function configureDependencies(DependencyBuilder $dependencies): void
+    public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
     {
+        $this->interactiveEntityArgument($input, self::ARG_RESOURCE_CLASS, $this->doctrineHelper);
     }
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
@@ -107,5 +114,9 @@ class MakePreviewCommand extends AbstractMaker
             * Fill the template with your preview content
             * In the {$resourceKey}Admin class use the `createPreviewFormBuilder` method instead of `createFormViewBuilder`
             TEXT);
+    }
+
+    public function configureDependencies(DependencyBuilder $dependencies): void
+    {
     }
 }

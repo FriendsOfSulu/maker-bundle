@@ -10,6 +10,7 @@ use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Webmozart\Assert\Assert;
 
+/** @internal */
 class ListPropertyInfoProvider
 {
     use ConsoleHelperTrait;
