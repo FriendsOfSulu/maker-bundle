@@ -27,6 +27,11 @@ final class MakePageTypeCommand extends AbstractMaker
     ) {
     }
 
+    public static function getCommandDescription(): string
+    {
+        return 'Create a blank XML template for new page types';
+    }
+
     public static function getCommandName(): string
     {
         return 'make:sulu:page-type';

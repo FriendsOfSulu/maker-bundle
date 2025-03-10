@@ -30,6 +30,11 @@ final class MakeTrashHandlerCommand extends AbstractMaker
     {
     }
 
+    public static function getCommandDescription(): string
+    {
+        return 'Create a trash handler for trashing and restoring a database entity';
+    }
+
     public static function getCommandName(): string
     {
         return 'make:sulu:trash';

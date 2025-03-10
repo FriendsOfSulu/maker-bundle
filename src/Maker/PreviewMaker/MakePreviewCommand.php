@@ -32,6 +32,11 @@ final class MakePreviewCommand extends AbstractMaker
     ) {
     }
 
+    public static function getCommandDescription(): string
+    {
+        return 'Create a preview provider for an entity';
+    }
+
     public static function getCommandName(): string
     {
         return 'make:sulu:preview';
