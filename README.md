@@ -18,8 +18,6 @@ namespace App\Entity;
 
 class Changelog
 {
-    public static $RESOURCE_KEY = 'changelog';
-    // or...
     public const RESOURCE_KEY = 'changelog';
 
     public ?int $id = null;
