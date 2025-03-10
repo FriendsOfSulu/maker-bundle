@@ -7,8 +7,7 @@
  * @var string $class_name
  * @var string $use_statements
  */
-$a = \explode('\\', $resourceClass);
-$resourceClassName = \end($a);
+$resourceClassName = Symfony\Bundle\MakerBundle\Str::getShortClassName($resourceClass);
 
 echo "<?php\n";
 ?>

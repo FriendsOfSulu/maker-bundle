@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
+/** @internal */
 enum JoinType: string
 {
     case LEFT = 'LEFT';

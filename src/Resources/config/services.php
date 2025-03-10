@@ -9,7 +9,6 @@ use FriendsOfSulu\MakerBundle\Maker\PreviewMaker\MakePreviewCommand;
 use FriendsOfSulu\MakerBundle\Maker\SuluPageMaker\MakePageTypeCommand;
 use FriendsOfSulu\MakerBundle\Maker\TashHandlerMaker\MakeTrashHandlerCommand;
 use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesser;
-use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ClassNameGenerator;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ResourceKeyExtractor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -40,13 +39,19 @@ return function(ContainerConfigurator $configurator) {
 
     $services
         ->set(MakeAdminConfigurationCommand::class)
-        ->args([service(ResourceKeyExtractor::class), service(ClassNameGenerator::class)])
+        ->args([
+            service(ResourceKeyExtractor::class),
+            service('maker.doctrine_helper'),
+        ])
         ->tag('maker.command')
     ;
 
     $services
         ->set(MakeControllerCommand::class)
-        ->args([service(ResourceKeyExtractor::class), service(ClassNameGenerator::class)])
+        ->args([
+            service(ResourceKeyExtractor::class),
+            service('maker.doctrine_helper'),
+        ])
         ->tag('maker.command')
     ;
 
@@ -56,11 +61,15 @@ return function(ContainerConfigurator $configurator) {
     ;
 
     $services->set(MakeTrashHandlerCommand::class)
+        ->args([service('maker.doctrine_helper')])
         ->tag('maker.command')
     ;
 
     $services->set(MakePreviewCommand::class)
-        ->args([service(ResourceKeyExtractor::class)])
+        ->args([
+            service(ResourceKeyExtractor::class),
+            service('maker.doctrine_helper'),
+        ])
         ->tag('maker.command')
     ;
 
@@ -72,10 +81,4 @@ return function(ContainerConfigurator $configurator) {
 
     $services->set(PropertyToSuluTypeGuesser::class);
     $services->set(ResourceKeyExtractor::class);
-
-    $services
-        ->set(ClassNameGenerator::class)
-        ->args([
-            service(ResourceKeyExtractor::class),
-        ]);
 };

@@ -3,6 +3,7 @@
 namespace FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use FriendsOfSulu\MakerBundle\Utils\ConsoleHelperTrait;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\UniqueNameGenerator;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
@@ -11,17 +12,18 @@ use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
 use Symfony\Bundle\MakerBundle\Str;
-use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Webmozart\Assert\Assert;
 
-class MakeListConfigurationCommand extends AbstractMaker
+/** @internal */
+final class MakeListConfigurationCommand extends AbstractMaker
 {
+    use ConsoleHelperTrait;
+
     public const ARG_RESOURCE_CLASS = 'resourceClass';
     public const ARG_LIST_DIRECTORY = 'configDir';
     public const OPT_ASSUME_DEFAULTS = 'assume-defaults';
@@ -61,7 +63,7 @@ class MakeListConfigurationCommand extends AbstractMaker
             )
             ->addOption(
                 self::OPT_ASSUME_DEFAULTS,
-                'd',
+                '-d',
                 InputOption::VALUE_NONE,
                 'Assuming all visible fields are searchable and use default translations.',
             );
@@ -71,12 +73,7 @@ class MakeListConfigurationCommand extends AbstractMaker
 
     public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
     {
-        $entityQuestion = new Question('What entity do you want to generate the list view for');
-        $entityQuestion->setValidator(Validator::notBlank(...));
-        $entityQuestion->setAutocompleterValues($this->doctrineHelper->getEntitiesForAutocomplete());
-
-        $className = $this->doctrineHelper->getEntityNamespace() . '\\' . $io->askQuestion($entityQuestion);
-        $input->setArgument(self::ARG_RESOURCE_CLASS, $className);
+        $this->interactiveEntityArgument($input, self::ARG_RESOURCE_CLASS, $this->doctrineHelper);
     }
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void

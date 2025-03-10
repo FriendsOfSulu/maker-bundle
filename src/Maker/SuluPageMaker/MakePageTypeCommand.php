@@ -15,7 +15,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-class MakePageTypeCommand extends AbstractMaker
+/** @internal */
+final class MakePageTypeCommand extends AbstractMaker
 {
     private const ARG_PAGE_KEY = 'pageKey';
     private const OPT_CONTROLLER = 'controller';
