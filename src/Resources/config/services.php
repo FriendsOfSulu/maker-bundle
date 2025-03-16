@@ -8,6 +8,7 @@ use FriendsOfSulu\MakerBundle\Maker\ListConfigurationMaker\MakeListConfiguration
 use FriendsOfSulu\MakerBundle\Maker\PreviewMaker\MakePreviewCommand;
 use FriendsOfSulu\MakerBundle\Maker\SuluPageMaker\MakePageTypeCommand;
 use FriendsOfSulu\MakerBundle\Maker\TashHandlerMaker\MakeTrashHandlerCommand;
+use FriendsOfSulu\MakerBundle\Maker\WebspaceConfigMaker\MakeWebspaceConfigCommand;
 use FriendsOfSulu\MakerBundle\Property\PropertyToSuluTypeGuesser;
 use FriendsOfSulu\MakerBundle\Utils\NameGenerators\ResourceKeyExtractor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -69,6 +70,14 @@ return function(ContainerConfigurator $configurator) {
         ->args([
             service(ResourceKeyExtractor::class),
             service('maker.doctrine_helper'),
+        ])
+        ->tag('maker.command')
+    ;
+
+    $services
+        ->set(MakeWebspaceConfigCommand::class)
+        ->args([
+            '%kernel.project_dir%',
         ])
         ->tag('maker.command')
     ;
