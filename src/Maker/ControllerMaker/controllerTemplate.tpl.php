@@ -17,10 +17,7 @@ namespace <?= $namespace; ?>;
 use <?= $resourceClass; ?>;
 <?= $use_statements; ?>
 
-/**
- * @RouteResource("<?= $resourceKey; ?>")
- */
-class <?= $class_name; ?> implements ClassResourceInterface
+class <?= $class_name; ?>
 {
 
     public function __construct(
@@ -40,6 +37,11 @@ class <?= $class_name; ?> implements ClassResourceInterface
     }
 <?php if ($settings->shouldHaveGetListAction) { ?>
 
+    #[Route(
+        '/<?= $resourceKey; ?>',
+        name: 'app_admin.<?= $resourceKey; ?>.list',
+        methods: ['GET'],
+    )]
     public function cgetAction(): Response
     {
         $fieldDescriptors = $this->fieldDescriptorFactory->getFieldDescriptors(<?= $resourceClassName; ?>::RESOURCE_KEY);
@@ -59,6 +61,11 @@ class <?= $class_name; ?> implements ClassResourceInterface
 <?php } ?>
 <?php if ($settings->shouldHaveGetAction) { ?>
 
+    #[Route(
+        '/<?= $resourceKey; ?>/{id}',
+        name: 'app_admin.<?= $resourceKey; ?>.get',
+        methods: ['GET'],
+    )]
     public function getAction(string $id): Response
     {
         $entity = $this->entityManager->find(<?= $resourceClassName; ?>::class, $id);
@@ -71,37 +78,59 @@ class <?= $class_name; ?> implements ClassResourceInterface
 <?php } ?>
 <?php if ($settings->shouldHavePostAction) { ?>
 
+    #[Route(
+        '/<?= $resourceKey; ?>',
+        name: 'app_admin.<?= $resourceKey; ?>.post',
+        methods: ['POST'],
+    )]
     public function postAction(Request $request): Response
     {
-        $productFilterConfiguration = new <?= $resourceClassName; ?>();
-        $this->mapDataFromRequest($request, $productFilterConfiguration);
+        $entity = new <?= $resourceClassName; ?>();
+        $this->mapDataFromRequest($request, $entity);
 
-        $this->entityManager->persist($productFilterConfiguration);
+        $this->entityManager->persist($entity);
         $this->entityManager->flush();
 
-        return $this->viewHandler->handle(View::create($productFilterConfiguration));
+        return $this->viewHandler->handle(View::create($entity));
     }
 <?php } ?>
 <?php if ($settings->shouldHavePutAction) { ?>
 
+    #[Route(
+        '/<?= $resourceKey; ?>/{id}',
+        name: 'app_admin.<?= $resourceKey; ?>.put',
+        methods: ['PUT'],
+    )]
     public function putAction(string $id, Request $request): Response
     {
-        $productConfiguration = $this->entityManager->find(<?= $resourceClassName; ?>::class, $id);
-        $this->mapDataFromRequest($request, $productConfiguration);
+        $entity = $this->entityManager->find(<?= $resourceClassName; ?>::class, $id);
+        if ($entity === null) {
+            return new Response('', Response::HTTP_NOT_FOUND);
+        }
+
+        $this->mapDataFromRequest($request, $entity);
 
         $this->entityManager->flush();
 
-        return $this->viewHandler->handle(View::create($productConfiguration));
+        return $this->viewHandler->handle(View::create($entity));
     }
 <?php } ?>
 <?php if ($settings->shouldHaveDeleteAction) { ?>
 
+    #[Route(
+        '/<?= $resourceKey; ?>/{id}',
+        name: 'app_admin.<?= $resourceKey; ?>.delete',
+        methods: ['DELETE'],
+    )]
     public function deleteAction(string $id): Response
     {
         $entity = $this->entityManager->find(<?= $resourceClassName; ?>::class, $id);
+        if ($entity === null) {
+            return new Response('', Response::HTTP_NOT_FOUND);
+        }
 
 <?php if ($settings->shouldHaveTrashing) { ?>
-        $this->trashManager->store('<?= $resourceKey; ?>', $listingTile);
+        $this->trashManager->store('<?= $resourceKey; ?>', $entity);
 <?php } ?>
 
         $this->entityManager->remove($entity);

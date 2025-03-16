@@ -50,6 +50,7 @@ return function(ContainerConfigurator $configurator) {
     $services
         ->set(MakeControllerCommand::class)
         ->args([
+            '%kernel.project_dir%',
             service(ResourceKeyExtractor::class),
             service('maker.doctrine_helper'),
         ])
