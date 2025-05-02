@@ -31,13 +31,13 @@ final class MakeControllerCommand extends AbstractMaker
     private ControllerGeneratorSettings $settings;
 
     public const CONTROLLER_DEPENDENCIES = [
-        'FOS\RestBundle\Routing\ClassResourceInterface',
-        'FOS\RestBundle\Controller\Annotations\RouteResource',
+        'Symfony\Component\Routing\Attribute\Route',
         'FOS\RestBundle\View\View',
         'FOS\RestBundle\View\ViewHandlerInterface',
     ];
 
     public function __construct(
+        private string $projectDirectory,
         private ResourceKeyExtractor $resourceKeyExtractor,
         private DoctrineHelper $doctrineHelper,
     ) {
@@ -160,15 +160,10 @@ final class MakeControllerCommand extends AbstractMaker
         $generator->writeChanges();
 
         $controllerClassName = $generatedClassName->getFullName();
+
+        $this->suggestAddingRouting($io);
+
         $io->info([
-            'Next steps: Add the controller to the route routes in the `config/routes_admin.yaml`',
-            <<<YAML
-app_{$resourceKey}_api:
-    type: rest
-    prefix: /admin/api
-    resource: $controllerClassName
-    name_prefix: app.
-YAML,
             'Registering the controller in the admin panel under `config/sulu_admin.yaml`:',
             <<<YAML
 sulu_admin:
@@ -204,5 +199,29 @@ YAML,
         $settings->shouldHavePutAction = $io->confirm('Should it have a putAction (update action)');
 
         return $settings;
+    }
+
+    private function suggestAddingRouting(ConsoleStyle $io): void
+    {
+        // Try to see if the thing is already set up and don't suggest it.
+        $routesContent = \file_get_contents(\implode(
+            \DIRECTORY_SEPARATOR,
+            [$this->projectDirectory, 'config', 'routes', 'sulu_admin.yaml'],
+        ));
+        if (\is_string($routesContent) && \str_contains($routesContent, 'admin_controllers:')) {
+            return;
+        }
+
+        $io->note(
+            <<<YAML
+Next steps: Add the controller to the route routes in the `config/routes_admin.yaml`
+
+admin_controllers:
+    resource:
+        path: ../src/Controller/Admin
+        namespace: App\Controller\Admin
+    prefix: /admin/api
+    type: attribute
+YAML);
     }
 }
