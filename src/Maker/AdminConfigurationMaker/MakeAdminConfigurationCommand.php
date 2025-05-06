@@ -170,7 +170,7 @@ final class MakeAdminConfigurationCommand extends AbstractMaker
         $settings->shouldHaveReferences = $io->confirm('Do you want to have an a references tab?');
 
         $slug = $this->askString($io, 'Enter the API slug', '/' . $settings->resourceKey);
-        $this->settings->slug = '/' . \ltrim($slug, '/');
+        $settings->slug = '/' . \ltrim($slug, '/');
 
         $settings->formKey = $this->askString($io, 'Form Key', $resourceKey);
         $settings->listKey = $this->askString($io, 'List Key', $resourceKey);
